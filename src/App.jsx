@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabase";
+import iconApp from "./assets/icon-app.png";
 
 
 // ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
@@ -485,7 +486,7 @@ tr:hover td { background:#FAFBFC; }
 function Logo({ size = 34, light = false }) {
   return (
     <img
-      src="/icon-app.png"
+      src={iconApp}
       alt="FUMEC"
       width={size}
       height={size}
