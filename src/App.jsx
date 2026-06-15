@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabase";
 import iconApp from "./assets/icon-app.png";
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
 
 // ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
@@ -8,6 +9,7 @@ const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 :root {
+  --chrome:#0B2D4E;
   --ink:#0B2D4E; --ink-2:#3D5A73; --ink-3:#7A96AD;
   --teal:#1A7A6E; --teal-light:#E8F5F3; --teal-mid:#2A9D8F;
   --sky:#1565C0; --sky-light:#E3F0FF;
@@ -26,14 +28,46 @@ const CSS = `
   --nav-h:64px;
   --bot-nav-h:64px;
 }
+
+/* ── DARK THEME ─────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --ink:#E7EDF4; --ink-2:#A9B9C9; --ink-3:#7488A0;
+  --teal:#3DBDAE; --teal-light:#0F2E2C; --teal-mid:#52D6C6;
+  --sky:#5CA8F2; --sky-light:#142A40;
+  --bg:#0F1E30; --bg-warm:#142A40; --bg-card:#142A40;
+  --border:#23405E; --border-2:#2E4F70;
+  --red:#F08A7E; --red-bg:#3A1E1C;
+  --green:#3DBDAE; --green-bg:#0F2E2C;
+  --amber:#F2C572; --amber-bg:#3A2C12;
+  --purple:#B79CF0; --purple-bg:#2A2148;
+  --shadow-sm:0 1px 4px rgba(0,0,0,.25);
+  --shadow-md:0 4px 20px rgba(0,0,0,.35);
+  --shadow-lg:0 12px 48px rgba(0,0,0,.45);
+}
+[data-theme="dark"] .badge-pac { background:#1E3A5F; color:#93C5FD; }
+[data-theme="dark"] .badge-psi { background:#0F3D2E; color:#6EE7B7; }
+[data-theme="dark"] .badge-sup { background:#2A2148; color:#C4B5FD; }
+[data-theme="dark"] .badge-pen { background:#3A2C12; color:#FCD34D; }
+[data-theme="dark"] .st-confirmado { background:#0F3D2E; color:#6EE7B7; }
+[data-theme="dark"] .st-pendente   { background:#3A2C12; color:#FCD34D; }
+[data-theme="dark"] .st-cancelado  { background:#3A1E1C; color:#FCA5A5; }
+[data-theme="dark"] .st-concluido  { background:#2A2148; color:#C4B5FD; }
+[data-theme="dark"] .st-inativo    { background:#1F2937; color:#9CA3AF; }
+[data-theme="dark"] .st-ativo      { background:#0F3D2E; color:#6EE7B7; }
+[data-theme="dark"] .st-aguardando { background:#3A2C12; color:#FCD34D; }
+[data-theme="dark"] .lgpd { background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.1); }
+[data-theme="dark"] .modal-x { background:var(--bg-warm); }
+[data-theme="dark"] .skel { background:linear-gradient(90deg, var(--border) 25%, #1B3650 50%, var(--border) 75%); background-size:200% 100%; }
+
 html { scroll-behavior:smooth; -webkit-font-smoothing:antialiased; }
-body { font-family:var(--font-body); color:var(--ink); background:var(--ink); font-size:16px; line-height:1.6; min-height:100vh; }
+body { font-family:var(--font-body); color:var(--ink); background:var(--chrome); font-size:16px; line-height:1.6; min-height:100vh; }
+body, .sec, .panel, .kpi, .user-card, .msg-card, .fb-card, .svc-card, .search-box, .dash-main, .modal, table td, table th { transition:background-color .3s ease, color .3s ease, border-color .3s ease; }
 .page-wrap { max-width:1160px; margin:0 auto; box-shadow:0 0 80px rgba(0,0,0,.35); overflow:hidden; }
 .sec { padding:5rem 2.5rem; background:var(--bg); margin:0; }
 .sec-alt { background:var(--bg-warm); }
 
 /* ── NAV ─────────────────────────────────────────────────────── */
-.nav { background:var(--ink); position:sticky; top:0; z-index:300; height:var(--nav-h); padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between; border-bottom:none; }
+.nav { background:var(--chrome); position:sticky; top:0; z-index:300; height:var(--nav-h); padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between; border-bottom:none; }
 .nav-logo { display:flex; align-items:center; gap:10px; cursor:pointer; text-decoration:none; }
 .nav-logo-img { width:38px; height:38px; border-radius:10px; object-fit:cover; }
 .nav-logo-text { display:flex; flex-direction:column; line-height:1; }
@@ -43,6 +77,8 @@ body { font-family:var(--font-body); color:var(--ink); background:var(--ink); fo
 .nav-link { color:rgba(255,255,255,.65); text-decoration:none; font-size:13.5px; font-weight:500; padding:6px 12px; border-radius:var(--r-xs); transition:all .18s; background:none; border:none; cursor:pointer; font-family:var(--font-body); }
 .nav-link:hover { color:#fff; background:rgba(255,255,255,.07); }
 .nav-cta { background:var(--teal); color:#fff !important; padding:8px 18px !important; border-radius:var(--r-sm) !important; font-weight:600 !important; font-size:13.5px !important; margin-left:8px; }
+.theme-toggle { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); color:#fff; width:36px; height:36px; border-radius:50%; font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .18s; flex-shrink:0; }
+.theme-toggle:hover { background:rgba(255,255,255,.16); }
 .nav-cta:hover { background:var(--teal-mid) !important; }
 .nav-user-pill { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); border-radius:100px; padding:5px 14px 5px 8px; cursor:pointer; color:rgba(255,255,255,.9); font-size:13px; transition:background .18s; }
 .nav-user-pill:hover { background:rgba(255,255,255,.14); }
@@ -57,7 +93,7 @@ body { font-family:var(--font-body); color:var(--ink); background:var(--ink); fo
 .hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
 
 /* Mobile Drawer */
-.mobile-drawer { position:fixed; top:var(--nav-h); left:0; right:0; background:var(--ink); z-index:250; padding:1rem 1.5rem 1.5rem; display:flex; flex-direction:column; gap:4px; transform:translateY(-110%); transition:transform .28s cubic-bezier(.4,0,.2,1); border-bottom:2px solid var(--teal); }
+.mobile-drawer { position:fixed; top:var(--nav-h); left:0; right:0; background:var(--chrome); z-index:250; padding:1rem 1.5rem 1.5rem; display:flex; flex-direction:column; gap:4px; transform:translateY(-110%); transition:transform .28s cubic-bezier(.4,0,.2,1); border-bottom:2px solid var(--teal); }
 .mobile-drawer.open { transform:translateY(0); }
 .mob-link { color:rgba(255,255,255,.75); text-decoration:none; font-size:15px; font-weight:500; padding:11px 14px; border-radius:var(--r-sm); display:flex; align-items:center; gap:10px; transition:all .15s; background:none; border:none; cursor:pointer; font-family:var(--font-body); width:100%; text-align:left; }
 .mob-link:hover,.mob-link.on { background:rgba(26,122,110,.2); color:#5EEAD4; }
@@ -71,7 +107,7 @@ body { font-family:var(--font-body); color:var(--ink); background:var(--ink); fo
 .badge-pen { background:#FEF3C7; color:#92400E; }
 
 /* ── HERO ────────────────────────────────────────────────────── */
-.hero { background:var(--ink); padding:4rem 2.5rem 3.5rem; display:grid; grid-template-columns:1fr 400px; gap:3rem; align-items:center; position:relative; overflow:hidden; }
+.hero { background:var(--chrome); padding:4rem 2.5rem 3.5rem; display:grid; grid-template-columns:1fr 400px; gap:3rem; align-items:center; position:relative; overflow:hidden; }
 .hero::before { content:''; position:absolute; top:-80px; right:-80px; width:520px; height:520px; background:radial-gradient(circle,rgba(26,122,110,.22) 0%,transparent 70%); pointer-events:none; }
 .hero-eyebrow { display:inline-flex; align-items:center; gap:7px; background:rgba(26,122,110,.18); border:1px solid rgba(26,122,110,.35); color:#5EEAD4; border-radius:100px; font-size:12px; font-weight:600; letter-spacing:.5px; padding:5px 14px; text-transform:uppercase; margin-bottom:1.5rem; }
 .hero h1 { font-family:var(--font-head); font-size:36px; font-weight:800; color:#fff; line-height:1.18; margin-bottom:1rem; max-width:520px; letter-spacing:-.5px; }
@@ -174,7 +210,7 @@ body { font-family:var(--font-body); color:var(--ink); background:var(--ink); fo
 .fg input:focus,.fg select:focus,.fg textarea:focus { border-color:var(--teal); box-shadow:0 0 0 3px rgba(26,122,110,.12); }
 .fg textarea { height:108px; resize:vertical; }
 .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.form-btn { width:100%; background:var(--ink); color:#fff; border:none; padding:13px; border-radius:var(--r-sm); font-size:15px; font-weight:700; cursor:pointer; transition:background .18s; margin-top:4px; font-family:var(--font-head); }
+.form-btn { width:100%; background:var(--chrome); color:#fff; border:none; padding:13px; border-radius:var(--r-sm); font-size:15px; font-weight:700; cursor:pointer; transition:background .18s; margin-top:4px; font-family:var(--font-head); }
 .form-btn:hover { background:var(--teal); }
 .form-btn:disabled { opacity:.6; cursor:not-allowed; }
 
@@ -223,6 +259,44 @@ footer { background:#07203A; color:rgba(255,255,255,.65); padding:3.5rem 2.5rem 
 .empty-state-title { font-family:var(--font-head); font-size:15px; font-weight:700; color:var(--ink); margin-bottom:4px; }
 .empty-state-sub { font-size:13px; color:var(--ink-2); max-width:380px; margin:0 auto; line-height:1.6; }
 
+/* ── SEARCH BOX ─────────────────────────────────────────────────── */
+.search-box { display:flex; align-items:center; gap:8px; background:var(--bg); border:1.5px solid var(--border); border-radius:var(--r-sm); padding:9px 14px; margin-bottom:1.25rem; transition:border-color .18s; }
+.search-box:focus-within { border-color:var(--teal); box-shadow:0 0 0 3px rgba(26,122,110,.12); }
+.search-box-icon { font-size:14px; opacity:.5; flex-shrink:0; }
+.search-box input { flex:1; border:none; outline:none; font-size:14px; color:var(--ink); background:transparent; font-family:var(--font-body); }
+.search-box-clear { background:var(--bg-warm); border:none; border-radius:50%; width:20px; height:20px; font-size:11px; cursor:pointer; color:var(--ink-3); flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.search-box-clear:hover { background:var(--border); }
+
+/* ── PASSWORD INPUT ─────────────────────────────────────────────── */
+.pwd-wrap { position:relative; display:flex; align-items:center; }
+.pwd-wrap input { width:100%; padding:10px 42px 10px 13px; border:1.5px solid var(--border); border-radius:var(--r-sm); font-size:16px; color:var(--ink); background:var(--bg); outline:none; transition:border-color .18s,box-shadow .18s; font-family:var(--font-body); }
+.pwd-wrap input:focus { border-color:var(--teal); box-shadow:0 0 0 3px rgba(26,122,110,.12); }
+.pwd-toggle { position:absolute; right:8px; background:none; border:none; font-size:16px; cursor:pointer; padding:4px; line-height:1; opacity:.6; transition:opacity .15s; }
+.pwd-toggle:hover { opacity:1; }
+
+/* ── TAB FADE TRANSITION ────────────────────────────────────────── */
+@keyframes tabFade { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+.tab-fade { animation:tabFade .22s ease; }
+
+/* ── FILTER CHIPS ───────────────────────────────────────────────── */
+.filter-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:1.25rem; }
+.filter-chip { padding:7px 16px; border-radius:100px; border:1.5px solid var(--border); background:var(--bg); font-size:12.5px; font-weight:600; color:var(--ink-2); cursor:pointer; transition:all .15s; font-family:var(--font-body); }
+.filter-chip:hover { border-color:var(--teal); color:var(--teal); }
+.filter-chip.active { background:var(--chrome); color:#fff; border-color:var(--chrome); }
+
+/* ── OBSERVAÇÕES BOX ────────────────────────────────────────────── */
+.obs-box { background:var(--bg-warm); border-left:3px solid var(--teal); border-radius:var(--r-sm); padding:.85rem 1rem; margin-top:8px; font-size:13px; color:var(--ink-2); line-height:1.6; }
+.obs-box strong { color:var(--ink); display:block; font-size:12px; text-transform:uppercase; letter-spacing:.3px; margin-bottom:4px; }
+
+/* ── CHARTS GRID ────────────────────────────────────────────────── */
+.charts-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+@media(max-width:760px){ .charts-grid{ grid-template-columns:1fr; } }
+
+/* ── LOAD MORE ──────────────────────────────────────────────────── */
+.load-more-btn { width:100%; padding:10px; margin-top:10px; background:var(--bg-warm); border:1px dashed var(--border-2); border-radius:var(--r-sm); color:var(--ink-2); font-size:13px; font-weight:600; cursor:pointer; transition:all .15s; font-family:var(--font-body); }
+.load-more-btn:hover { background:var(--teal-light); color:var(--teal); border-color:var(--teal); }
+
+
 /* ── SIDEBAR NOTIFICATION DOTS ─────────────────────────────────── */
 .sb-item-badge { background:#EF4444; color:#fff; font-size:10px; font-weight:700; border-radius:100px; padding:1px 6px; margin-left:auto; min-width:18px; text-align:center; line-height:1.4; }
 .bot-nav-item-badge { position:absolute; top:2px; right:10px; background:#EF4444; color:#fff; font-size:9px; font-weight:700; border-radius:100px; padding:0 4px; min-width:14px; line-height:1.3; text-align:center; }
@@ -231,19 +305,21 @@ footer { background:#07203A; color:rgba(255,255,255,.65); padding:3.5rem 2.5rem 
 /* ── TOAST ───────────────────────────────────────────────────── */
 .toast { position:fixed; bottom:24px; right:16px; z-index:9999; display:flex; flex-direction:column; gap:8px; pointer-events:none; }
 .toast-item { padding:12px 18px; border-radius:var(--r-sm); font-size:13.5px; font-weight:600; box-shadow:var(--shadow-lg); animation:slideIn .25s ease; pointer-events:auto; display:flex; align-items:center; gap:10px; min-width:260px; max-width:calc(100vw - 32px); }
+.toast-close { background:rgba(255,255,255,.15); border:none; color:#fff; width:20px; height:20px; border-radius:50%; font-size:11px; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:background .15s; }
+.toast-close:hover { background:rgba(255,255,255,.3); }
 .toast-ok { background:#065F46; color:#fff; }
 .toast-err { background:#991B1B; color:#fff; }
-.toast-info { background:var(--ink); color:#fff; }
+.toast-info { background:var(--chrome); color:#fff; }
 @keyframes slideIn { from { transform:translateX(40px); opacity:0; } to { transform:translateX(0); opacity:1; } }
 
 /* ── DASHBOARD SHELL ─────────────────────────────────────────── */
 .dash { display:flex; min-height:calc(100vh - var(--nav-h)); }
-.sidebar { width:252px; flex-shrink:0; background:var(--ink); display:flex; flex-direction:column; border-right:1px solid rgba(255,255,255,.06); }
+.sidebar { width:252px; flex-shrink:0; background:var(--chrome); display:flex; flex-direction:column; border-right:1px solid rgba(255,255,255,.06); }
 .sb-user { padding:1.5rem 1.25rem 1.25rem; border-bottom:1px solid rgba(255,255,255,.07); display:flex; flex-direction:column; align-items:center; text-align:center; }
 .sb-avatar-wrap { position:relative; margin-bottom:10px; }
 .sb-avatar { width:60px; height:60px; border-radius:14px; background:var(--teal); color:#fff; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:800; font-family:var(--font-head); overflow:hidden; }
 .sb-avatar img { width:100%; height:100%; object-fit:cover; }
-.sb-avatar-edit { position:absolute; bottom:-4px; right:-4px; width:22px; height:22px; border-radius:50%; background:var(--teal); color:#fff; border:2px solid var(--ink); display:flex; align-items:center; justify-content:center; font-size:11px; cursor:pointer; transition:background .15s; }
+.sb-avatar-edit { position:absolute; bottom:-4px; right:-4px; width:22px; height:22px; border-radius:50%; background:var(--teal); color:#fff; border:2px solid var(--chrome); display:flex; align-items:center; justify-content:center; font-size:11px; cursor:pointer; transition:background .15s; }
 .sb-avatar-edit:hover { background:var(--teal-mid); }
 .sb-user h4 { font-family:var(--font-head); font-size:13.5px; font-weight:700; color:#fff; margin-bottom:3px; }
 .sb-user span { font-size:12px; color:rgba(255,255,255,.45); }
@@ -258,7 +334,7 @@ footer { background:#07203A; color:rgba(255,255,255,.65); padding:3.5rem 2.5rem 
 .dash-sub { font-size:14px; color:var(--ink-2); margin-bottom:2rem; }
 
 /* Bottom Nav (mobile dashboard) */
-.bot-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:var(--ink); border-top:1px solid rgba(255,255,255,.1); z-index:200; height:var(--bot-nav-h); padding:0 4px; }
+.bot-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:var(--chrome); border-top:1px solid rgba(255,255,255,.1); z-index:200; height:var(--bot-nav-h); padding:0 4px; }
 .bot-nav-inner { display:flex; align-items:stretch; height:100%; overflow-x:auto; scrollbar-width:none; }
 .bot-nav-inner::-webkit-scrollbar { display:none; }
 .bot-nav-item { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; flex:1; min-width:52px; padding:6px 4px; cursor:pointer; border:none; background:none; color:rgba(255,255,255,.5); font-size:10px; font-weight:600; font-family:var(--font-body); transition:all .15s; border-top:2px solid transparent; white-space:nowrap; }
@@ -302,7 +378,7 @@ tr:hover td { background:#FAFBFC; }
 .cd { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:12.5px; border-radius:var(--r-xs); cursor:pointer; transition:all .12s; font-weight:500; }
 .cd:hover:not(.cd-empty):not(.cd-past) { background:var(--teal-light); color:var(--teal); }
 .cd-today { background:var(--teal); color:#fff; font-weight:700; }
-.cd-selected { background:var(--ink); color:#fff; font-weight:700; }
+.cd-selected { background:var(--chrome); color:#fff; font-weight:700; }
 .cd-past { color:#CBD5DC; cursor:default; }
 .cd-empty { cursor:default; }
 .slots { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:1rem; }
@@ -385,6 +461,8 @@ tr:hover td { background:#FAFBFC; }
 .btn-success { background:var(--green-bg); color:var(--green); border:1px solid #A7D7D2; }
 .btn-success:hover { background:#C5EBE8; }
 .btn-sm { padding:7px 14px; font-size:12.5px; border-radius:var(--r-xs); }
+.btn-xs { padding:3px 8px; font-size:11px; border-radius:var(--r-xs); border:1px solid var(--border); background:var(--bg); color:var(--ink-2); cursor:pointer; font-family:var(--font-body); }
+.btn-xs:hover { border-color:var(--teal); color:var(--teal); }
 
 /* ══════════════════════════════════════════════════════════════
    RESPONSIVE — MOBILE FIRST
@@ -507,7 +585,49 @@ function fmt(iso) {
   const [y, m, d] = iso.split("-");
   return `${d}/${m}/${y}`;
 }
+/** Exporta um array de objetos para CSV e dispara o download */
+function exportarCSV(filename, headers, rows) {
+  const escape = (v) => {
+    const s = (v === null || v === undefined) ? "" : String(v);
+    return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const csv = [
+    headers.map(h => escape(h.label)).join(";"),
+    ...rows.map(r => headers.map(h => escape(typeof h.value === "function" ? h.value(r) : r[h.value])).join(";")),
+  ].join("\n");
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 function Spin() { return <span className="spin"/>; }
+
+// ─── TEMA (claro/escuro) ──────────────────────────────────────────────────────
+function useTheme() {
+  const [theme, setTheme] = useState(() => {
+    try { return localStorage.getItem("fumec-theme") || "light"; } catch { return "light"; }
+  });
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    try { localStorage.setItem("fumec-theme", theme); } catch {}
+  }, [theme]);
+  return [theme, setTheme];
+}
+function ThemeToggle({ theme, setTheme, className = "" }) {
+  return (
+    <button
+      className={`theme-toggle ${className}`}
+      onClick={() => setTheme(t => t === "dark" ? "light" : "dark")}
+      title={theme === "dark" ? "Modo claro" : "Modo escuro"}
+      aria-label="Alternar tema"
+    >
+      {theme === "dark" ? "☀️" : "🌙"}
+    </button>
+  );
+}
 
 // ─── AVATAR (cor consistente por nome) ───────────────────────────────────────
 const AVATAR_PALETTE = [
@@ -610,6 +730,114 @@ function EmptyState({ icon = "📭", title, subtitle, ctaLabel, onCta }) {
   );
 }
 
+// ─── CONFIRM MODAL ────────────────────────────────────────────────────────────
+/**
+ * Modal de confirmação para ações destrutivas/importantes.
+ * Uso: <ConfirmModal config={confirmState} onClose={() => setConfirmState(null)} />
+ * config = { title, message, confirmLabel, danger, onConfirm, extra? }
+ */
+function ConfirmModal({ config, onClose }) {
+  const [busy, setBusy] = useState(false);
+  if (!config) return null;
+  const { title, message, confirmLabel = "Confirmar", danger = false, onConfirm, extra } = config;
+
+  async function handleConfirm() {
+    setBusy(true);
+    try {
+      await onConfirm();
+    } finally {
+      setBusy(false);
+      onClose();
+    }
+  }
+
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div className="modal" style={{maxWidth:420}} onClick={e => e.stopPropagation()}>
+        <button className="modal-x" onClick={onClose}>✕</button>
+        <div style={{fontSize:38,marginBottom:10}}>{danger ? "⚠️" : "❓"}</div>
+        <h3 style={{fontFamily:"var(--font-head)",fontSize:18,fontWeight:800,color:"var(--ink)",marginBottom:8}}>{title}</h3>
+        <p style={{fontSize:14,color:"var(--ink-2)",lineHeight:1.6,marginBottom:extra?12:20}}>{message}</p>
+        {extra}
+        <div style={{display:"flex",gap:10,marginTop:extra?16:0}}>
+          <button className="btn btn-outline" style={{flex:1}} onClick={onClose} disabled={busy}>Cancelar</button>
+          <button className={`btn ${danger ? "btn-danger" : "btn-teal"}`} style={{flex:1}} onClick={handleConfirm} disabled={busy}>
+            {busy ? <Spin/> : confirmLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── SEARCH BOX ───────────────────────────────────────────────────────────────
+function SearchBox({ value, onChange, placeholder = "Buscar..." }) {
+  return (
+    <div className="search-box">
+      <span className="search-box-icon">🔍</span>
+      <input type="text" value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} />
+      {value && <button className="search-box-clear" onClick={() => onChange("")}>✕</button>}
+    </div>
+  );
+}
+
+// ─── PASSWORD INPUT (com toggle mostrar/ocultar) ──────────────────────────────
+function PasswordInput({ value, onChange, placeholder = "••••••", onKeyDown }) {
+  const [show, setShow] = useState(false);
+  return (
+    <div className="pwd-wrap">
+      <input
+        type={show ? "text" : "password"}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        onKeyDown={onKeyDown}
+      />
+      <button type="button" className="pwd-toggle" onClick={() => setShow(s => !s)} tabIndex={-1}>
+        {show ? "🙈" : "👁️"}
+      </button>
+    </div>
+  );
+}
+
+// ─── EMAIL EDIT FIELD ─────────────────────────────────────────────────────────
+/** Campo de e-mail com edição inline. Atualiza auth.users (envia confirmação) e profiles.email. */
+function EmailEditField({ uid, currentEmail, onUpdated }) {
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState(currentEmail || "");
+  const [busy, setBusy] = useState(false);
+
+  async function salvar() {
+    if (!value || value === currentEmail) { setEditing(false); return; }
+    setBusy(true);
+    const { error: authErr } = await supabase.auth.updateUser({ email: value });
+    if (authErr) { toast(`Erro ao atualizar e-mail: ${authErr.message}`, "err"); setBusy(false); return; }
+    const { error: profErr } = await supabase.from("profiles").update({ email: value }).eq("id", uid);
+    setBusy(false);
+    if (profErr) { toast(`E-mail de confirmação enviado, mas houve erro ao atualizar o perfil: ${profErr.message}`, "err"); }
+    onUpdated(value);
+    setEditing(false);
+    toast("✅ Enviamos um e-mail de confirmação para o novo endereço. Verifique sua caixa de entrada para concluir a troca.");
+  }
+
+  if (!editing) {
+    return (
+      <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+        <span style={{fontSize:13.5,color:"var(--ink-2)"}}>{currentEmail || "—"}</span>
+        <button className="btn btn-sm btn-outline" onClick={() => { setValue(currentEmail||""); setEditing(true); }}>✏️ Editar e-mail</button>
+      </div>
+    );
+  }
+  return (
+    <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
+      <input type="email" value={value} onChange={e=>setValue(e.target.value)} style={{flex:"1 1 220px",padding:"8px 12px",border:"1.5px solid var(--border)",borderRadius:"var(--r-sm)",fontSize:14,fontFamily:"var(--font-body)",background:"var(--bg)",color:"var(--ink)"}} />
+      <button className="btn btn-sm btn-teal" onClick={salvar} disabled={busy}>{busy ? <Spin/> : "Salvar"}</button>
+      <button className="btn btn-sm btn-outline" onClick={() => setEditing(false)} disabled={busy}>Cancelar</button>
+    </div>
+  );
+}
+
+
 
 // ─── TOAST SYSTEM ─────────────────────────────────────────────────────────────
 let _setToasts = null;
@@ -620,16 +848,20 @@ function useToastSetup() {
 }
 function toast(msg, type = "ok") {
   if (!_setToasts) return;
-  const id = Date.now();
+  const id = Date.now() + Math.random();
   _setToasts(p => [...p, { id, msg, type }]);
-  setTimeout(() => _setToasts(p => p.filter(t => t.id !== id)), 3500);
+  const duration = type === "err" ? 6500 : 3500;
+  setTimeout(() => _setToasts(p => p.filter(t => t.id !== id)), duration);
 }
 function Toasts() {
   const toasts = useToastSetup();
   return (
     <div className="toast">
       {toasts.map(t => (
-        <div key={t.id} className={`toast-item toast-${t.type}`}>{t.msg}</div>
+        <div key={t.id} className={`toast-item toast-${t.type}`}>
+          <span style={{flex:1}}>{t.msg}</span>
+          <button className="toast-close" onClick={() => _setToasts(p => p.filter(x => x.id !== t.id))}>✕</button>
+        </div>
       ))}
     </div>
   );
@@ -637,6 +869,7 @@ function Toasts() {
 
 // ─── APP ─────────────────────────────────────────────────────────────────────
 export default function App() {
+  const [theme, setTheme]     = useTheme();
   const [page, setPage]       = useState("home");
   const [user, setUser]       = useState(null);
   const [profile, setProfile] = useState(null);
@@ -653,6 +886,15 @@ export default function App() {
   const [rName, setRN]  = useState(""); const [rEmail, setRE] = useState("");
   const [rPass, setRP]  = useState(""); const [rMat, setRM]   = useState("");
   const [rCrp, setRC]   = useState("");
+
+  // Recuperação de senha
+  const [forgotMode, setForgotMode] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetSent, setResetSent]   = useState(false);
+  const [resetBusy, setResetBusy]   = useState(false);
+  const [newPass1, setNewPass1]     = useState("");
+  const [newPass2, setNewPass2]     = useState("");
+  const [resetErr, setResetErr]     = useState("");
 
   // Contact form state
   const [cNome, setCNome] = useState("");
@@ -674,6 +916,7 @@ export default function App() {
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (ev, ses) => {
       if (ev === "SIGNED_OUT") { setUser(null); setProfile(null); setPage("home"); }
+      if (ev === "PASSWORD_RECOVERY") { setPage("reset-password"); }
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -690,6 +933,31 @@ export default function App() {
     setUser(data.user); await loadProfile(data.user.id);
     setBusy(false); setModal(false); setPage("dashboard");
     toast("✅ Bem-vindo(a)!");
+  }
+
+  async function enviarRecuperacao() {
+    setResetErr("");
+    if (!resetEmail) { setResetErr("Informe seu e-mail."); return; }
+    setResetBusy(true);
+    const redirectTo = window.location.href.split("#")[0].split("?")[0];
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, { redirectTo });
+    setResetBusy(false);
+    if (error) { setResetErr(error.message); return; }
+    setResetSent(true);
+  }
+
+  async function salvarNovaSenha() {
+    setResetErr("");
+    if (newPass1.length < 6) { setResetErr("A senha deve ter pelo menos 6 caracteres."); return; }
+    if (newPass1 !== newPass2) { setResetErr("As senhas não coincidem."); return; }
+    setResetBusy(true);
+    const { error } = await supabase.auth.updateUser({ password: newPass1 });
+    setResetBusy(false);
+    if (error) { setResetErr(error.message); return; }
+    toast("✅ Senha atualizada com sucesso! Faça login novamente.");
+    await supabase.auth.signOut();
+    setNewPass1(""); setNewPass2("");
+    setPage("home");
   }
 
   async function doRegister() {
@@ -747,6 +1015,38 @@ export default function App() {
     toast("✅ Mensagem enviada! Retornaremos em breve.");
   }
 
+  if (page === "reset-password") {
+    return (
+      <div className="page-wrap">
+        <style>{CSS}</style>
+        <Toasts/>
+        <nav className="nav">
+          <a className="nav-logo"><Logo size={34} light/><div className="nav-logo-text"><strong>FUMEC</strong><span>Clínica Escola · Psicologia</span></div></a>
+          <ul className="nav-links"><li><ThemeToggle theme={theme} setTheme={setTheme}/></li></ul>
+        </nav>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"calc(100vh - var(--nav-h))",padding:"1.25rem",background:"var(--bg-warm)"}}>
+          <div style={{textAlign:"center",maxWidth:420,width:"100%",background:"var(--bg)",borderRadius:"var(--r)",padding:"2.5rem 1.5rem",boxShadow:"var(--shadow-md)"}}>
+            <div style={{fontSize:48,marginBottom:"1rem"}}>🔑</div>
+            <h2 style={{fontFamily:"var(--font-head)",fontSize:20,marginBottom:6,color:"var(--ink)"}}>Defina sua nova senha</h2>
+            <p style={{fontSize:13,color:"var(--ink-2)",marginBottom:"1.5rem"}}>Escolha uma nova senha para sua conta.</p>
+            <div className="fg" style={{textAlign:"left"}}>
+              <label>Nova senha</label>
+              <PasswordInput value={newPass1} onChange={e=>setNewPass1(e.target.value)} />
+            </div>
+            <div className="fg" style={{textAlign:"left"}}>
+              <label>Confirmar nova senha</label>
+              <PasswordInput value={newPass2} onChange={e=>setNewPass2(e.target.value)} onKeyDown={e=>e.key==="Enter"&&salvarNovaSenha()} />
+            </div>
+            {resetErr && <div className="msg-err">⚠️ {resetErr}</div>}
+            <button className="form-btn" style={{marginTop:8}} onClick={salvarNovaSenha} disabled={resetBusy}>
+              {resetBusy ? <><Spin/> Salvando...</> : "Salvar nova senha"}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (page === "dashboard" && user && profile) {
     if (profile.status === "pendente_aprovacao") {
       const isPsi = profile.tipo === "psicologo";
@@ -756,7 +1056,10 @@ export default function App() {
           <Toasts/>
           <nav className="nav">
             <a className="nav-logo"><Logo size={34} light/><div className="nav-logo-text"><strong>FUMEC</strong><span>Clínica Escola · Psicologia</span></div></a>
-            <ul className="nav-links"><li><button className="nav-link" onClick={logout}>Sair →</button></li></ul>
+            <ul className="nav-links">
+              <li><ThemeToggle theme={theme} setTheme={setTheme}/></li>
+              <li><button className="nav-link" onClick={logout}>Sair →</button></li>
+            </ul>
           </nav>
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"calc(100vh - var(--nav-h))",padding:"1.25rem",background:"var(--bg-warm)"}}>
             <div style={{textAlign:"center",maxWidth:480,width:"100%",background:"var(--bg)",borderRadius:"var(--r)",padding:"2.5rem 1.5rem",boxShadow:"var(--shadow-md)"}}>
@@ -780,7 +1083,7 @@ export default function App() {
         </div>
       );
     }
-    return <Dashboard user={user} profile={profile} onLogout={logout} onProfileUpdate={setProfile} />;
+    return <Dashboard user={user} profile={profile} onLogout={logout} onProfileUpdate={setProfile} theme={theme} setTheme={setTheme} />;
   }
 
   const FAQS = [
@@ -806,6 +1109,7 @@ export default function App() {
             <li key={l} className="hide-m"><a href={h} className="nav-link">{l}</a></li>
           ))}
           <li className="hide-m"><button className="nav-link nav-cta" onClick={() => setModal(true)}>Entrar / Cadastrar</button></li>
+          <li><ThemeToggle theme={theme} setTheme={setTheme}/></li>
           <li>
             <div className={`hamburger ${menuOpen?"open":""}`} onClick={() => setMenuOpen(o=>!o)} aria-label="Menu">
               <span/><span/><span/>
@@ -1042,6 +1346,40 @@ export default function App() {
               <Logo size={38}/>
               <div className="modal-logo-text"><strong>FUMEC</strong><span>Clínica Escola de Psicologia</span></div>
             </div>
+            {forgotMode ? (
+              <>
+                <h3 style={{fontFamily:"var(--font-head)",fontSize:17,fontWeight:800,color:"var(--ink)",marginBottom:6,textAlign:"center"}}>
+                  {resetSent ? "Verifique seu e-mail" : "Recuperar senha"}
+                </h3>
+                {resetSent ? (
+                  <div className="al al-ok" style={{textAlign:"center",lineHeight:1.6}}>
+                    📧 Enviamos um link de recuperação para <strong>{resetEmail}</strong>. Abra seu e-mail e siga as instruções para definir uma nova senha.
+                  </div>
+                ) : (
+                  <>
+                    <p style={{fontSize:13,color:"var(--ink-2)",marginBottom:"1rem",textAlign:"center"}}>
+                      Digite seu e-mail cadastrado. Enviaremos um link para você redefinir sua senha.
+                    </p>
+                    <div className="fg">
+                      <label>E-mail</label>
+                      <input type="email" value={resetEmail} onChange={e=>setResetEmail(e.target.value)} placeholder="seu@email.com" onKeyDown={e=>e.key==="Enter"&&enviarRecuperacao()}/>
+                    </div>
+                    {resetErr && <div className="msg-err">⚠️ {resetErr}</div>}
+                    <button className="form-btn" onClick={enviarRecuperacao} disabled={resetBusy}>
+                      {resetBusy ? <><Spin/> Enviando...</> : "Enviar link de recuperação"}
+                    </button>
+                  </>
+                )}
+                <button
+                  className="btn btn-outline"
+                  style={{width:"100%",marginTop:12}}
+                  onClick={() => { setForgotMode(false); setResetSent(false); setResetErr(""); setResetEmail(""); }}
+                >
+                  ← Voltar ao login
+                </button>
+              </>
+            ) : (
+            <>
             <div className="modal-tabs">
               <button className={`modal-tab ${tab==="login"?"active":""}`} onClick={() => {setTab("login");setErr("");}}>Entrar na conta</button>
               <button className={`modal-tab ${tab==="reg"?"active":""}`}   onClick={() => {setTab("reg");setErr("");}}>Criar conta</button>
@@ -1049,9 +1387,16 @@ export default function App() {
             {tab === "login" ? (
               <>
                 <div className="fg"><label>E-mail</label><input type="email" value={lEmail} onChange={e=>setLE(e.target.value)} placeholder="seu@email.com"/></div>
-                <div className="fg"><label>Senha</label><input type="password" value={lPass} onChange={e=>setLP(e.target.value)} placeholder="••••••" onKeyDown={e=>e.key==="Enter"&&doLogin()}/></div>
+                <div className="fg"><label>Senha</label><PasswordInput value={lPass} onChange={e=>setLP(e.target.value)} onKeyDown={e=>e.key==="Enter"&&doLogin()}/></div>
                 {err && <div className="msg-err">⚠️ {err}</div>}
                 <button className="form-btn" onClick={doLogin} disabled={busy}>{busy?<><Spin/> Entrando...</>:"Entrar"}</button>
+                <button
+                  className="nav-link"
+                  style={{display:"block",margin:"12px auto 0",color:"var(--teal)",fontSize:12.5,fontWeight:600,background:"none"}}
+                  onClick={() => { setForgotMode(true); setResetEmail(lEmail); }}
+                >
+                  Esqueci minha senha
+                </button>
               </>
             ) : (
               <>
@@ -1072,10 +1417,12 @@ export default function App() {
                 <div className="fg"><label>E-mail *</label><input type="email" value={rEmail} onChange={e=>setRE(e.target.value)} placeholder="seu@fumec.edu.br"/></div>
                 {role==="paciente"  && <div className="fg"><label>Matrícula FUMEC</label><input value={rMat} onChange={e=>setRM(e.target.value)} placeholder="20240001"/></div>}
                 {role!=="paciente"  && <div className="fg"><label>CRP</label><input value={rCrp} onChange={e=>setRC(e.target.value)} placeholder="04/12345"/></div>}
-                <div className="fg"><label>Senha * (mín. 6 caracteres)</label><input type="password" value={rPass} onChange={e=>setRP(e.target.value)} placeholder="••••••"/></div>
+                <div className="fg"><label>Senha * (mín. 6 caracteres)</label><PasswordInput value={rPass} onChange={e=>setRP(e.target.value)}/></div>
                 {err && <div className="msg-err">⚠️ {err}</div>}
                 <button className="form-btn" onClick={doRegister} disabled={busy}>{busy?<><Spin/> Criando conta...</>:"Criar minha conta"}</button>
               </>
+            )}
+            </>
             )}
           </div>
         </div>
@@ -1085,8 +1432,16 @@ export default function App() {
 }
 
 // ─── DASHBOARD SHELL ─────────────────────────────────────────────────────────
-function Dashboard({ user, profile, onLogout, onProfileUpdate }) {
+function Dashboard({ user, profile, onLogout, onProfileUpdate, theme, setTheme }) {
   const [aba, setAba] = useState("inicio");
+  const tabFadeRef = useRef();
+  useEffect(() => {
+    const el = tabFadeRef.current;
+    if (!el) return;
+    el.classList.remove("tab-fade");
+    void el.offsetWidth; // força reflow para reiniciar a animação CSS
+    el.classList.add("tab-fade");
+  }, [aba]);
   const MENUS = {
     paciente:   [{id:"inicio",ic:"🏠",l:"Início"},{id:"perfil",ic:"👤",l:"Meu Perfil"},{id:"agendar",ic:"📅",l:"Agendar Consulta"},{id:"consultas",ic:"📋",l:"Minhas Consultas"}],
     psicologo:  [{id:"inicio",ic:"🏠",l:"Início"},{id:"perfil",ic:"👤",l:"Meu Perfil"},{id:"agenda",ic:"📅",l:"Minha Agenda"},{id:"atendimentos",ic:"📋",l:"Atendimentos"},{id:"feedbacks",ic:"💬",l:"Feedbacks Recebidos"}],
@@ -1157,6 +1512,7 @@ function Dashboard({ user, profile, onLogout, onProfileUpdate }) {
               <span className={`badge ${BADGES[profile.tipo]}`}>{LABELS[profile.tipo]}</span>
             </div>
           </li>
+          <li><ThemeToggle theme={theme} setTheme={setTheme}/></li>
           <li><button className="nav-link" onClick={onLogout}>Sair →</button></li>
         </ul>
       </nav>
@@ -1207,9 +1563,11 @@ function Dashboard({ user, profile, onLogout, onProfileUpdate }) {
           </div>
         </nav>
         <main className="dash-main">
-          {profile.tipo==="paciente"   && <DashPac  aba={aba} setAba={setAba} profile={profile} uid={user.id} onPU={onProfileUpdate} avatarUrl={avatarUrl}/>}
-          {profile.tipo==="psicologo"  && <DashPsi  aba={aba} setAba={setAba} profile={profile} uid={user.id} onPU={onProfileUpdate} avatarUrl={avatarUrl}/>}
-          {profile.tipo==="supervisor" && <DashSup  aba={aba} setAba={setAba} profile={profile} uid={user.id} onPU={onProfileUpdate} avatarUrl={avatarUrl}/>}
+          <div className="tab-fade" ref={tabFadeRef}>
+            {profile.tipo==="paciente"   && <DashPac  aba={aba} setAba={setAba} profile={profile} uid={user.id} onPU={onProfileUpdate} avatarUrl={avatarUrl}/>}
+            {profile.tipo==="psicologo"  && <DashPsi  aba={aba} setAba={setAba} profile={profile} uid={user.id} onPU={onProfileUpdate} avatarUrl={avatarUrl}/>}
+            {profile.tipo==="supervisor" && <DashSup  aba={aba} setAba={setAba} profile={profile} uid={user.id} onPU={onProfileUpdate} avatarUrl={avatarUrl}/>}
+          </div>
         </main>
       </div>
     </div>
@@ -1223,11 +1581,30 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
   const [loading, setLoading]     = useState(true);
   const [nome, setNome]           = useState(profile.nome);
   const [mat, setMat]             = useState(profile.matricula||"");
+  const [busca, setBusca]         = useState("");
+  const [confirmCfg, setConfirmCfg] = useState(null);
+  const [avaliarAg, setAvaliarAg] = useState(null);
+  const [avNota, setAvNota] = useState(5);
+  const [avTexto, setAvTexto] = useState("");
+  const [avBusy, setAvBusy] = useState(false);
+
+  async function enviarAvaliacao() {
+    if (!avaliarAg) return;
+    setAvBusy(true);
+    const { error } = await supabase.from("agendamentos")
+      .update({ avaliacao_nota: avNota, avaliacao_texto: avTexto || null })
+      .eq("id", avaliarAg.id);
+    setAvBusy(false);
+    if (error) { toast(`Erro ao enviar avaliação: ${error.message}`, "err"); return; }
+    setConsultas(p => p.map(c => c.id===avaliarAg.id ? {...c, avaliacao_nota: avNota, avaliacao_texto: avTexto||null} : c));
+    toast("✅ Obrigado pela sua avaliação!");
+    setAvaliarAg(null); setAvNota(5); setAvTexto("");
+  }
 
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const {data:ag} = await supabase.from("agendamentos").select("*").eq("paciente_id",uid).order("data",{ascending:true});
+      const {data:ag} = await supabase.from("agendamentos").select("*").eq("paciente_id",uid).order("data",{ascending:true}).order("hora",{ascending:true});
       const {data:ps} = await supabase.from("profiles").select("id,nome,crp").eq("tipo","psicologo").eq("status","ativo");
       setConsultas(ag||[]); setPsicos(ps||[]); setLoading(false);
     })();
@@ -1237,6 +1614,42 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
     const {data,error} = await supabase.from("profiles").update({nome,matricula:mat}).eq("id",uid).select().single();
     if (error) { toast("Erro ao salvar.", "err"); return; }
     if (data) { onPU(data); toast("✅ Perfil atualizado com sucesso!"); }
+  }
+
+  async function cancelarConsulta(id) {
+    const { error } = await supabase.from("agendamentos").update({ status: "cancelado" }).eq("id", id);
+    if (error) { toast(`Erro ao cancelar: ${error.message}`, "err"); return; }
+    setConsultas(p => p.map(a => a.id === id ? { ...a, status: "cancelado" } : a));
+    toast("✅ Consulta cancelada.");
+  }
+
+  async function reagendarConsulta(a) {
+    // Cancela a consulta atual e leva o paciente para a tela de agendamento
+    const { error } = await supabase.from("agendamentos").update({ status: "cancelado" }).eq("id", a.id);
+    if (error) { toast(`Erro ao reagendar: ${error.message}`, "err"); return; }
+    setConsultas(p => p.map(c => c.id === a.id ? { ...c, status: "cancelado" } : c));
+    toast("A consulta anterior foi cancelada. Escolha um novo horário.", "info");
+    setAba("agendar");
+  }
+
+  function pedirReagendamento(a) {
+    setConfirmCfg({
+      title: "Reagendar consulta?",
+      message: `A consulta de ${fmt(a.data)} às ${fmtH(a.hora)} com ${a.psicologo_nome || "—"} será cancelada e você poderá escolher um novo horário em seguida. Deseja continuar?`,
+      confirmLabel: "Sim, reagendar",
+      danger: false,
+      onConfirm: () => reagendarConsulta(a),
+    });
+  }
+
+  function pedirCancelamento(a) {
+    setConfirmCfg({
+      title: "Cancelar consulta?",
+      message: `Tem certeza que deseja cancelar a consulta de ${fmt(a.data)} às ${fmtH(a.hora)} com ${a.psicologo_nome || "—"}? Essa ação não pode ser desfeita.`,
+      confirmLabel: "Sim, cancelar",
+      danger: true,
+      onConfirm: () => cancelarConsulta(a.id),
+    });
   }
 
   if (aba==="perfil") return (
@@ -1253,6 +1666,7 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
         <div className="panel-title">✏️ Editar dados</div>
         <div className="fg"><label>Nome</label><input value={nome} onChange={e=>setNome(e.target.value)}/></div>
         <div className="fg"><label>Matrícula</label><input value={mat} onChange={e=>setMat(e.target.value)} placeholder="20240001"/></div>
+        <div className="fg"><label>E-mail</label><EmailEditField uid={uid} currentEmail={profile.email} onUpdated={(em)=>onPU({...profile, email: em})}/></div>
         <button className="btn btn-teal btn-sm" onClick={salvar}>Salvar alterações</button>
       </div>
     </div>
@@ -1260,10 +1674,44 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
 
   if (aba==="agendar") return <TelaAgendar uid={uid} profile={profile} psicos={psicos} onAgendado={ag=>setConsultas(c=>[...c,ag])}/>;
 
-  if (aba==="consultas") return (
+  if (aba==="consultas") {
+    const filtradas = consultas.filter(a => {
+      if (!busca) return true;
+      const term = busca.toLowerCase();
+      return (a.psicologo_nome||"").toLowerCase().includes(term)
+        || fmt(a.data).includes(term)
+        || a.status.toLowerCase().includes(term);
+    });
+    return (
     <div>
       <div className="dash-title">📋 Minhas Consultas</div>
       <div className="dash-sub">Histórico e próximas sessões</div>
+      <ConfirmModal config={confirmCfg} onClose={() => setConfirmCfg(null)} />
+      {avaliarAg && (
+        <div className="overlay" onClick={() => setAvaliarAg(null)}>
+          <div className="modal" style={{maxWidth:420}} onClick={e => e.stopPropagation()}>
+            <button className="modal-x" onClick={() => setAvaliarAg(null)}>✕</button>
+            <div style={{fontSize:38,marginBottom:10}}>⭐</div>
+            <h3 style={{fontFamily:"var(--font-head)",fontSize:18,fontWeight:800,color:"var(--ink)",marginBottom:6}}>Avaliar sessão</h3>
+            <p style={{fontSize:13.5,color:"var(--ink-2)",marginBottom:12}}>
+              Sessão de {fmt(avaliarAg.data)} com <strong>{avaliarAg.psicologo_nome||"—"}</strong>. Sua avaliação ajuda a melhorar nosso atendimento.
+            </p>
+            <div style={{display:"flex",gap:6,justifyContent:"center",marginBottom:14}}>
+              {[1,2,3,4,5].map(n=>(
+                <button key={n} onClick={()=>setAvNota(n)} style={{fontSize:30,background:"none",border:"none",cursor:"pointer",opacity:n<=avNota?1:.25,transition:"opacity .15s"}}>⭐</button>
+              ))}
+            </div>
+            <div className="fg">
+              <label>Comentário (opcional)</label>
+              <textarea value={avTexto} onChange={e=>setAvTexto(e.target.value)} placeholder="Conte como foi sua experiência..." style={{height:90}}/>
+            </div>
+            <div style={{display:"flex",gap:10,marginTop:6}}>
+              <button className="btn btn-outline" style={{flex:1}} onClick={() => setAvaliarAg(null)} disabled={avBusy}>Cancelar</button>
+              <button className="btn btn-teal" style={{flex:1}} onClick={enviarAvaliacao} disabled={avBusy}>{avBusy ? <Spin/> : "Enviar avaliação"}</button>
+            </div>
+          </div>
+        </div>
+      )}
       {loading ? <Loading kind="table" rows={4} /> :
        consultas.length===0 ? (
          <EmptyState
@@ -1273,19 +1721,43 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
            ctaLabel="📅 Agendar consulta"
            onCta={() => setAba("agendar")}
          />
-       ) :
+       ) : <>
+        <SearchBox value={busca} onChange={setBusca} placeholder="Buscar por psicólogo, data ou status..." />
+        {filtradas.length===0 ? (
+          <EmptyState icon="🔍" title="Nenhum resultado" subtitle="Tente buscar por outro termo." />
+        ) : (
         <div className="panel">
           <div className="tw"><table>
-            <thead><tr><th>Data</th><th>Horário</th><th>Psicólogo(a)</th><th>Sessão</th><th>Status</th></tr></thead>
-            <tbody>{consultas.map(a=>(
-              <tr key={a.id}><td>{fmt(a.data)}</td><td>{fmtH(a.hora)}</td><td>{a.psicologo_nome||"—"}</td>
-                <td>#{a.sessao_numero}</td><td><span className={`st st-${a.status}`}>{a.status}</span></td></tr>
+            <thead><tr><th>Data</th><th>Horário</th><th>Psicólogo(a)</th><th>Sessão</th><th>Status</th><th>Observações</th><th>Ações</th></tr></thead>
+            <tbody>{filtradas.map(a=>(
+              <tr key={a.id}>
+                <td>{fmt(a.data)}</td><td>{fmtH(a.hora)}</td><td>{a.psicologo_nome||"—"}</td>
+                <td>#{a.sessao_numero}</td><td><span className={`st st-${a.status}`}>{a.status}</span></td>
+                <td style={{maxWidth:220}}>{a.observacoes ? <span style={{fontSize:12.5,color:"var(--ink-2)"}}>{a.observacoes}</span> : <span style={{color:"var(--ink-3)"}}>—</span>}</td>
+                <td>
+                  {(a.status==="pendente"||a.status==="confirmado") ? (
+                    <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                      <button className="btn btn-sm btn-outline" onClick={() => pedirReagendamento(a)}>🔄 Reagendar</button>
+                      <button className="btn btn-sm btn-danger" onClick={() => pedirCancelamento(a)}>Cancelar</button>
+                    </div>
+                  ) : a.status==="concluido" ? (
+                    a.avaliacao_nota ? (
+                      <span style={{fontSize:13}}>{"⭐".repeat(a.avaliacao_nota)}</span>
+                    ) : (
+                      <button className="btn btn-sm btn-outline" onClick={() => { setAvaliarAg(a); setAvNota(5); setAvTexto(""); }}>⭐ Avaliar sessão</button>
+                    )
+                  ) : <span style={{color:"var(--ink-3)",fontSize:12.5}}>—</span>}
+                </td>
+              </tr>
             ))}</tbody>
           </table></div>
         </div>
+        )}
+       </>
       }
     </div>
-  );
+    );
+  }
 
   const conf = consultas.filter(a=>a.status==="confirmado").length;
   const pend = consultas.filter(a=>a.status==="pendente").length;
@@ -1324,6 +1796,9 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
               ))}</tbody>
             </table></div>
           }
+          {prox.length>5 && (
+            <button className="load-more-btn" onClick={() => setAba("consultas")}>Ver todas as {prox.length} consultas →</button>
+          )}
         </div>
         <div className="al al-warn">⚠️ Em caso de crise, ligue para o <strong>CVV: 188</strong> (24h, gratuito)</div>
       </>}
@@ -1415,9 +1890,9 @@ function TelaAgendar({ uid, profile, psicos, onAgendado }) {
             <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
               {psicos.map(p=>(
                 <button key={p.id} onClick={()=>{setPsico(p.id);setDia(null);setHora(null);}} className="btn btn-sm" style={{
-                  background:psico===p.id?"var(--ink)":"var(--bg-warm)",
+                  background:psico===p.id?"var(--chrome)":"var(--bg-warm)",
                   color:psico===p.id?"#fff":"var(--ink)",
-                  border:`1.5px solid ${psico===p.id?"var(--ink)":"var(--border)"}`,
+                  border:`1.5px solid ${psico===p.id?"var(--chrome)":"var(--border)"}`,
                 }}>{p.nome}{p.crp&&` · CRP ${p.crp}`}</button>
               ))}
             </div>
@@ -1473,6 +1948,12 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
   const [loading, setL]   = useState(true);
   const [nome, setNome]   = useState(profile.nome);
   const [crp, setCrp]     = useState(profile.crp||"");
+  const [busca, setBusca] = useState("");
+  const [confirmCfg, setConfirmCfg] = useState(null);
+  const [concluirAg, setConcluirAg] = useState(null); // agendamento sendo concluído
+  const [obsTexto, setObsTexto] = useState("");
+  const [obsBusy, setObsBusy] = useState(false);
+  const [histExpand, setHistExpand] = useState(null); // paciente_id expandido
 
   // Agenda state
   const HORAS = ["08:00","09:00","10:00","11:00","14:00","15:00","16:00","17:00"];
@@ -1489,7 +1970,7 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
   useEffect(() => {
     (async () => {
       setL(true);
-      const {data:at} = await supabase.from("agendamentos").select("*").eq("psicologo_id",uid).order("data",{ascending:true});
+      const {data:at} = await supabase.from("agendamentos").select("*").eq("psicologo_id",uid).order("data",{ascending:true}).order("hora",{ascending:true});
       const {data:fb} = await supabase.from("feedbacks").select("*").eq("psicologo_id",uid).order("created_at",{ascending:false});
       setAtend(at||[]); setFbs(fb||[]); setL(false);
     })();
@@ -1539,6 +2020,42 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
     if (data) { onPU(data); toast("✅ Perfil atualizado!"); }
   }
 
+  // Abre modal para concluir atendimento com observações
+  function abrirConcluir(a) {
+    setObsTexto(a.observacoes || "");
+    setConcluirAg(a);
+  }
+
+  async function confirmarConclusao() {
+    if (!concluirAg) return;
+    setObsBusy(true);
+    const { error } = await supabase.from("agendamentos")
+      .update({ status: "concluido", observacoes: obsTexto || null })
+      .eq("id", concluirAg.id);
+    setObsBusy(false);
+    if (error) { toast(`Erro ao concluir: ${error.message}`, "err"); return; }
+    setAtend(p => p.map(a => a.id === concluirAg.id ? { ...a, status: "concluido", observacoes: obsTexto || null } : a));
+    toast("✅ Atendimento concluído!");
+    setConcluirAg(null);
+  }
+
+  async function cancelarAtendimento(id) {
+    const { error } = await supabase.from("agendamentos").update({ status: "cancelado" }).eq("id", id);
+    if (error) { toast(`Erro ao cancelar: ${error.message}`, "err"); return; }
+    setAtend(p => p.map(a => a.id === id ? { ...a, status: "cancelado" } : a));
+    toast("✅ Atendimento cancelado.");
+  }
+
+  function pedirCancelamentoAtendimento(a) {
+    setConfirmCfg({
+      title: "Cancelar atendimento?",
+      message: `Tem certeza que deseja cancelar o atendimento de ${fmt(a.data)} às ${fmtH(a.hora)} com ${a.paciente_nome || "—"}? Essa ação não pode ser desfeita.`,
+      confirmLabel: "Sim, cancelar",
+      danger: true,
+      onConfirm: () => cancelarAtendimento(a.id),
+    });
+  }
+
   if (aba==="perfil") return (
     <div>
       <div className="dash-title">👤 Meu Perfil</div>
@@ -1552,6 +2069,7 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
         <div className="panel-title">✏️ Editar dados</div>
         <div className="fg"><label>Nome</label><input value={nome} onChange={e=>setNome(e.target.value)}/></div>
         <div className="fg"><label>CRP</label><input value={crp} onChange={e=>setCrp(e.target.value)} placeholder="04/12345"/></div>
+        <div className="fg"><label>E-mail</label><EmailEditField uid={uid} currentEmail={profile.email} onUpdated={(em)=>onPU({...profile, email: em})}/></div>
         <button className="btn btn-teal btn-sm" onClick={salvarPerfil}>Salvar</button>
       </div>
     </div>
@@ -1596,9 +2114,51 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
     </div>
   );
 
-  if (aba==="atendimentos") return (
+  if (aba==="atendimentos") {
+    const filtrados = atend.filter(a => {
+      if (!busca) return true;
+      const term = busca.toLowerCase();
+      return (a.paciente_nome||"").toLowerCase().includes(term)
+        || fmt(a.data).includes(term)
+        || a.status.toLowerCase().includes(term);
+    });
+    return (
     <div>
       <div className="dash-title">📋 Meus Atendimentos</div>
+      <ConfirmModal config={confirmCfg} onClose={() => setConfirmCfg(null)} />
+
+      {/* Modal: concluir com observações */}
+      {concluirAg && (
+        <div className="overlay" onClick={() => setConcluirAg(null)}>
+          <div className="modal" style={{maxWidth:480}} onClick={e => e.stopPropagation()}>
+            <button className="modal-x" onClick={() => setConcluirAg(null)}>✕</button>
+            <div style={{fontSize:38,marginBottom:10}}>🟣</div>
+            <h3 style={{fontFamily:"var(--font-head)",fontSize:18,fontWeight:800,color:"var(--ink)",marginBottom:6}}>Concluir atendimento</h3>
+            <p style={{fontSize:13.5,color:"var(--ink-2)",marginBottom:14}}>
+              Sessão de {fmt(concluirAg.data)} às {fmtH(concluirAg.hora)} com <strong>{concluirAg.paciente_nome || "—"}</strong>.
+            </p>
+            <div className="fg">
+              <label>Observações da sessão (opcional)</label>
+              <textarea
+                value={obsTexto}
+                onChange={e=>setObsTexto(e.target.value)}
+                placeholder="Resumo da sessão, evolução do paciente, pontos a acompanhar..."
+                style={{height:120}}
+              />
+              <div className="al al-info" style={{marginTop:8,fontSize:12.5}}>
+                💬 Essas observações ficam visíveis para você e para o supervisor.
+              </div>
+            </div>
+            <div style={{display:"flex",gap:10,marginTop:6}}>
+              <button className="btn btn-outline" style={{flex:1}} onClick={() => setConcluirAg(null)} disabled={obsBusy}>Cancelar</button>
+              <button className="btn btn-teal" style={{flex:1}} onClick={confirmarConclusao} disabled={obsBusy}>
+                {obsBusy ? <Spin/> : "✅ Concluir atendimento"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {loading ? <Loading kind="table" rows={5} /> :
         <div className="panel">
           <div className="panel-title">Lista de atendimentos</div>
@@ -1608,19 +2168,67 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
               title="Nenhum atendimento ainda"
               subtitle="Quando pacientes agendarem sessões com você, elas aparecerão aqui."
             />
-          ) :
+          ) : <>
+            <SearchBox value={busca} onChange={setBusca} placeholder="Buscar por paciente, data ou status..." />
+            {filtrados.length===0 ? (
+              <EmptyState icon="🔍" title="Nenhum resultado" subtitle="Tente buscar por outro termo." />
+            ) :
             <div className="tw"><table>
-              <thead><tr><th>Data</th><th>Horário</th><th>Paciente</th><th>Sessão</th><th>Status</th></tr></thead>
-              <tbody>{atend.map(a=>(
-                <tr key={a.id}><td>{fmt(a.data)}</td><td>{fmtH(a.hora)}</td><td>{a.paciente_nome||"—"}</td>
-                  <td>#{a.sessao_numero}</td><td><span className={`st st-${a.status}`}>{a.status}</span></td></tr>
-              ))}</tbody>
+              <thead><tr><th>Data</th><th>Horário</th><th>Paciente</th><th>Sessão</th><th>Status</th><th>Observações</th><th>Ações</th></tr></thead>
+              <tbody>{filtrados.map(a=>{
+                const historico = atend.filter(h => h.paciente_id===a.paciente_id && h.status==="concluido" && h.id!==a.id)
+                  .sort((x,y) => (x.data+x.hora < y.data+y.hora) ? 1 : -1);
+                const expandido = histExpand === a.paciente_id;
+                return (
+                <>
+                <tr key={a.id}>
+                  <td>{fmt(a.data)}</td><td>{fmtH(a.hora)}</td>
+                  <td>
+                    {a.paciente_nome||"—"}
+                    {historico.length>0 && (
+                      <button className="btn-xs" style={{marginLeft:6}} onClick={()=>setHistExpand(expandido?null:a.paciente_id)}>
+                        {expandido?"▲":"▼"} Histórico ({historico.length})
+                      </button>
+                    )}
+                  </td>
+                  <td>#{a.sessao_numero}</td><td><span className={`st st-${a.status}`}>{a.status}</span></td>
+                  <td style={{maxWidth:220}}>{a.observacoes ? <span style={{fontSize:12.5,color:"var(--ink-2)"}}>{a.observacoes}</span> : <span style={{color:"var(--ink-3)"}}>—</span>}</td>
+                  <td style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                    {a.status==="confirmado" && <>
+                      <button className="btn btn-sm btn-success" onClick={() => abrirConcluir(a)}>🟣 Concluir</button>
+                      <button className="btn btn-sm btn-danger" onClick={() => pedirCancelamentoAtendimento(a)}>Cancelar</button>
+                    </>}
+                    {a.status==="concluido" && (
+                      <button className="btn btn-sm btn-outline" onClick={() => abrirConcluir(a)}>✏️ Editar obs.</button>
+                    )}
+                    {(a.status!=="confirmado" && a.status!=="concluido") && <span style={{color:"var(--ink-3)",fontSize:12.5}}>—</span>}
+                  </td>
+                </tr>
+                {expandido && (
+                  <tr><td colSpan={7} style={{padding:0,border:"none"}}>
+                    <div className="obs-box" style={{margin:"4px 0 10px"}}>
+                      <strong>Histórico com {a.paciente_nome}</strong>
+                      {historico.map(h=>(
+                        <div key={h.id} style={{padding:"6px 0",borderTop:"1px solid var(--border)"}}>
+                          <strong style={{fontSize:12.5,color:"var(--ink)"}}>{fmt(h.data)}</strong> — Sessão #{h.sessao_numero}
+                          {h.observacoes && <div style={{marginTop:2}}>{h.observacoes}</div>}
+                          {!h.observacoes && <div style={{marginTop:2,color:"var(--ink-3)"}}>Sem observações registradas.</div>}
+                        </div>
+                      ))}
+                    </div>
+                  </td></tr>
+                )}
+                </>
+                );
+              })}</tbody>
             </table></div>
-          }
+            }
+          </>}
         </div>
       }
     </div>
-  );
+    );
+  }
 
   if (aba==="feedbacks") return (
     <div>
@@ -1661,8 +2269,9 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
         </div>
         <div className="panel">
           <div className="panel-title">📅 Próximos atendimentos</div>
-          {atend.filter(a=>a.status!=="concluido"&&a.status!=="cancelado").length===0
-            ? (
+          {(() => {
+            const prox = atend.filter(a=>a.status!=="concluido"&&a.status!=="cancelado");
+            if (prox.length===0) return (
               <EmptyState
                 icon="📅"
                 title="Nenhum atendimento agendado"
@@ -1670,15 +2279,20 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                 ctaLabel="🕐 Configurar agenda"
                 onCta={() => setAba("agenda")}
               />
-            )
-            : <div className="tw"><table>
+            );
+            return <>
+              <div className="tw"><table>
                 <thead><tr><th>Data</th><th>Horário</th><th>Paciente</th><th>Status</th></tr></thead>
-                <tbody>{atend.filter(a=>a.status!=="concluido"&&a.status!=="cancelado").slice(0,5).map(a=>(
+                <tbody>{prox.slice(0,5).map(a=>(
                   <tr key={a.id}><td>{fmt(a.data)}</td><td>{fmtH(a.hora)}</td><td>{a.paciente_nome||"—"}</td>
                     <td><span className={`st st-${a.status}`}>{a.status}</span></td></tr>
                 ))}</tbody>
               </table></div>
-          }
+              {prox.length>5 && (
+                <button className="load-more-btn" onClick={() => setAba("atendimentos")}>Ver todos os {prox.length} atendimentos →</button>
+              )}
+            </>;
+          })()}
         </div>
       </>}
     </div>
@@ -1686,6 +2300,109 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
 }
 
 // ─── SUPERVISOR ──────────────────────────────────────────────────────────────
+// ─── GRÁFICOS DO SUPERVISOR ───────────────────────────────────────────────────
+function SupervisorCharts({ todos, psicos }) {
+  // Atendimentos por mês (últimos 6 meses)
+  const meses = {};
+  const hoje = new Date();
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+    const key = `${String(d.getMonth()+1).padStart(2,"0")}/${String(d.getFullYear()).slice(2)}`;
+    meses[key] = 0;
+  }
+  todos.forEach(a => {
+    if (!a.data) return;
+    const [y, m] = a.data.split("-");
+    const key = `${m}/${y.slice(2)}`;
+    if (key in meses) meses[key]++;
+  });
+  const dataMes = Object.entries(meses).map(([mes, total]) => ({ mes, total }));
+
+  // Distribuição por status
+  const statusCount = { confirmado:0, pendente:0, concluido:0, cancelado:0 };
+  todos.forEach(a => { if (a.status in statusCount) statusCount[a.status]++; });
+  const dataStatus = [
+    { name: "Confirmados", value: statusCount.confirmado, color: "#1A7A6E" },
+    { name: "Pendentes", value: statusCount.pendente, color: "#B45309" },
+    { name: "Concluídos", value: statusCount.concluido, color: "#5B21B6" },
+    { name: "Cancelados", value: statusCount.cancelado, color: "#C0392B" },
+  ].filter(d => d.value > 0);
+
+  // Atendimentos por psicólogo
+  const porPsico = {};
+  todos.forEach(a => {
+    const nome = a.psicologo_nome || "—";
+    porPsico[nome] = (porPsico[nome] || 0) + 1;
+  });
+  const dataPsico = Object.entries(porPsico)
+    .map(([nome, total]) => ({ nome: nome.split(" ")[0], total }))
+    .sort((a,b) => b.total - a.total).slice(0, 8);
+
+  const totalAtend = todos.length;
+  const concluidos = statusCount.concluido;
+  const cancelados = statusCount.cancelado;
+  const taxaConclusao = totalAtend ? Math.round((concluidos / totalAtend) * 100) : 0;
+  const taxaCancelamento = totalAtend ? Math.round((cancelados / totalAtend) * 100) : 0;
+
+  if (totalAtend === 0) return null;
+
+  return (
+    <>
+      <div className="kpi-row">
+        <div className="kpi"><div className="kpi-num">{taxaConclusao}%</div><div className="kpi-label">Taxa de conclusão</div></div>
+        <div className="kpi"><div className="kpi-num" style={{color: taxaCancelamento > 20 ? "var(--red)" : "var(--teal)"}}>{taxaCancelamento}%</div><div className="kpi-label">Taxa de cancelamento</div></div>
+        <div className="kpi"><div className="kpi-num">{psicos.filter(p=>!p.status||p.status==="ativo").length}</div><div className="kpi-label">Psicólogos ativos</div></div>
+      </div>
+      <div className="charts-grid">
+        <div className="panel">
+          <div className="panel-title">📈 Atendimentos por mês</div>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={dataMes} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+              <XAxis dataKey="mes" tick={{ fontSize: 12, fill: "var(--ink-2)" }} axisLine={{ stroke: "var(--border)" }} tickLine={false} />
+              <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "var(--ink-2)" }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid var(--border)", fontSize: 13, background: "var(--bg-card)", color: "var(--ink)" }} cursor={{ fill: "var(--teal-light)" }} />
+              <Bar dataKey="total" fill="#1A7A6E" radius={[6, 6, 0, 0]} name="Atendimentos" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="panel">
+          <div className="panel-title">🍩 Distribuição por status</div>
+          <ResponsiveContainer width="100%" height={220}>
+            <PieChart>
+              <Pie data={dataStatus} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3}>
+                {dataStatus.map((e, i) => <Cell key={i} fill={e.color} />)}
+              </Pie>
+              <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid var(--border)", fontSize: 13, background: "var(--bg-card)", color: "var(--ink)" }} />
+            </PieChart>
+          </ResponsiveContainer>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center", marginTop: 4 }}>
+            {dataStatus.map((e, i) => (
+              <span key={i} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: "var(--ink-2)" }}>
+                <span style={{ width: 10, height: 10, borderRadius: 3, background: e.color, display: "inline-block" }} />{e.name} ({e.value})
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+      {dataPsico.length > 0 && (
+        <div className="panel">
+          <div className="panel-title">👥 Atendimentos por psicólogo(a)</div>
+          <ResponsiveContainer width="100%" height={Math.max(180, dataPsico.length * 38)}>
+            <BarChart data={dataPsico} layout="vertical" margin={{ top: 0, right: 20, left: 10, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
+              <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12, fill: "var(--ink-2)" }} axisLine={false} tickLine={false} />
+              <YAxis type="category" dataKey="nome" tick={{ fontSize: 12, fill: "var(--ink-2)" }} axisLine={false} tickLine={false} width={80} />
+              <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid var(--border)", fontSize: 13, background: "var(--bg-card)", color: "var(--ink)" }} cursor={{ fill: "var(--teal-light)" }} />
+              <Bar dataKey="total" fill="#1565C0" radius={[0, 6, 6, 0]} name="Atendimentos" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+    </>
+  );
+}
+
 function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
   const [todos, setTodos]     = useState([]);
   const [fbs, setFbs]         = useState([]);
@@ -1696,6 +2413,14 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
   const [replyTxt, setReplyTxt] = useState("");
   const [loading, setL]       = useState(true);
   const [nome, setNome]       = useState(profile.nome);
+  const [confirmCfg, setConfirmCfg] = useState(null);
+
+  // Busca/filtro
+  const [buscaUsuarios, setBuscaUsuarios] = useState("");
+  const [buscaAtend, setBuscaAtend] = useState("");
+  const [filtroStatus, setFiltroStatus] = useState("todos");
+  const [buscaGerenciar, setBuscaGerenciar] = useState("");
+  const [buscaMsg, setBuscaMsg] = useState("");
 
   const [fbPsico, setFbP]     = useState("");
   const [fbPac, setFbPac]     = useState("");
@@ -1706,7 +2431,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
   useEffect(() => {
     (async () => {
       setL(true);
-      const {data:ag} = await supabase.from("agendamentos").select("*").order("data",{ascending:true});
+      const {data:ag} = await supabase.from("agendamentos").select("*").order("data",{ascending:true}).order("hora",{ascending:true});
       const {data:fb} = await supabase.from("feedbacks").select("*").order("created_at",{ascending:false});
       // Busca psicólogos — aceita status null (banco sem coluna) ou ativo
       const {data:ps} = await supabase.from("profiles").select("id,nome,crp,status,avatar_url").eq("tipo","psicologo");
@@ -1786,6 +2511,35 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
     setMsgSel(msg);
   }
 
+  // ── Confirmações para ações destrutivas ─────────────────────────────────
+  function pedirRejeicao(u, tipo) {
+    setConfirmCfg({
+      title: `Rejeitar ${tipo}?`,
+      message: `Tem certeza que deseja rejeitar o cadastro de ${u.nome}? A conta ficará inativa e o usuário não terá acesso ao sistema.`,
+      confirmLabel: "Sim, rejeitar",
+      danger: true,
+      onConfirm: () => setStatusUsuario(u.id, "inativo"),
+    });
+  }
+  function pedirDesativacao(u) {
+    setConfirmCfg({
+      title: "Desativar psicólogo(a)?",
+      message: `${u.nome} deixará de aparecer na lista de agendamento dos pacientes. Você pode reativar a qualquer momento.`,
+      confirmLabel: "Sim, desativar",
+      danger: true,
+      onConfirm: () => setStatusUsuario(u.id, "inativo"),
+    });
+  }
+  function pedirCancelamentoAg(a) {
+    setConfirmCfg({
+      title: "Cancelar agendamento?",
+      message: `Cancelar a sessão de ${fmt(a.data)} às ${fmtH(a.hora)} entre ${a.paciente_nome||"—"} e ${a.psicologo_nome||"—"}? Essa ação não pode ser desfeita.`,
+      confirmLabel: "Sim, cancelar",
+      danger: true,
+      onConfirm: () => atualizar(a.id, "cancelado"),
+    });
+  }
+
   if (aba==="perfil") return (
     <div>
       <div className="dash-title">👩‍🏫 Meu Perfil</div>
@@ -1798,16 +2552,23 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
       <div className="panel">
         <div className="panel-title">✏️ Editar dados</div>
         <div className="fg"><label>Nome</label><input value={nome} onChange={e=>setNome(e.target.value)}/></div>
+        <div className="fg"><label>E-mail</label><EmailEditField uid={uid} currentEmail={profile.email} onUpdated={(em)=>onPU({...profile, email: em})}/></div>
         <button className="btn btn-teal btn-sm" onClick={salvarPerfil}>Salvar</button>
       </div>
     </div>
   );
 
   // ── GESTÃO DE USUÁRIOS ────────────────────────────────────────────────────
-  if (aba==="usuarios") return (
+  if (aba==="usuarios") {
+    const term = buscaUsuarios.toLowerCase();
+    const matches = (u) => !term || u.nome.toLowerCase().includes(term) || (u.email||"").toLowerCase().includes(term) || (u.crp||"").toLowerCase().includes(term) || (u.matricula||"").toLowerCase().includes(term);
+    const psicosAtivosInativos = usuarios.filter(u=>u.tipo==="psicologo"&&u.status!=="pendente_aprovacao"&&matches(u));
+    const pacientesFiltrados = usuarios.filter(u=>u.tipo==="paciente"&&matches(u));
+    return (
     <div>
       <div className="dash-title">👥 Gestão de Usuários</div>
       <div className="dash-sub">Gerencie contas, ative psicólogos e aprove supervisores</div>
+      <ConfirmModal config={confirmCfg} onClose={() => setConfirmCfg(null)} />
       {loading ? <Loading kind="cards" rows={4} /> : <>
 
         {/* Supervisores pendentes */}
@@ -1823,7 +2584,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                 <div className="user-card-actions">
                   <span className="st st-aguardando">Aguardando</span>
                   <button className="btn btn-sm btn-success" onClick={()=>setStatusUsuario(u.id,"ativo")}>✅ Aprovar</button>
-                  <button className="btn btn-sm btn-danger"  onClick={()=>setStatusUsuario(u.id,"inativo")}>❌ Rejeitar</button>
+                  <button className="btn btn-sm btn-danger"  onClick={()=>pedirRejeicao(u, "supervisor")}>❌ Rejeitar</button>
                 </div>
               </div>
             ))}
@@ -1846,19 +2607,21 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                 <div className="user-card-actions">
                   <span className="st st-aguardando">Aguardando ativação</span>
                   <button className="btn btn-sm btn-success" onClick={()=>setStatusUsuario(u.id,"ativo")}>✅ Ativar para atender</button>
-                  <button className="btn btn-sm btn-danger"  onClick={()=>setStatusUsuario(u.id,"inativo")}>❌ Rejeitar</button>
+                  <button className="btn btn-sm btn-danger"  onClick={()=>pedirRejeicao(u, "psicólogo")}>❌ Rejeitar</button>
                 </div>
               </div>
             ))}
           </div>
         )}
 
+        <SearchBox value={buscaUsuarios} onChange={setBuscaUsuarios} placeholder="Buscar usuário por nome, e-mail, CRP ou matrícula..." />
+
         {/* Psicólogos ativos/inativos */}
         <div className="panel">
           <div className="panel-title">🧑‍⚕️ Psicólogos</div>
-          {usuarios.filter(u=>u.tipo==="psicologo"&&u.status!=="pendente_aprovacao").length===0
-            ? <EmptyState icon="🧑‍⚕️" title="Nenhum psicólogo cadastrado" subtitle="Quando psicólogos se cadastrarem na plataforma, eles aparecerão aqui para ativação." />
-            : usuarios.filter(u=>u.tipo==="psicologo"&&u.status!=="pendente_aprovacao").map(u=>(
+          {psicosAtivosInativos.length===0
+            ? <EmptyState icon="🧑‍⚕️" title={buscaUsuarios ? "Nenhum resultado" : "Nenhum psicólogo cadastrado"} subtitle={buscaUsuarios ? "Tente buscar por outro termo." : "Quando psicólogos se cadastrarem na plataforma, eles aparecerão aqui para ativação."} />
+            : psicosAtivosInativos.map(u=>(
               <div className="user-card" key={u.id}>
                 <div className="user-card-left">
                   <Avatar className="user-av-sm" name={u.nome} url={u.avatar_url}/>
@@ -1871,7 +2634,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                   <span className={`st st-${u.status||"ativo"}`}>{u.status||"ativo"}</span>
                   {(u.status||"ativo")!=="ativo"
                     ? <button className="btn btn-sm btn-success" onClick={()=>setStatusUsuario(u.id,"ativo")}>✅ Ativar</button>
-                    : <button className="btn btn-sm btn-danger"  onClick={()=>setStatusUsuario(u.id,"inativo")}>⛔ Desativar</button>
+                    : <button className="btn btn-sm btn-danger"  onClick={()=>pedirDesativacao(u)}>⛔ Desativar</button>
                   }
                 </div>
               </div>
@@ -1882,11 +2645,11 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
         {/* Pacientes */}
         <div className="panel">
           <div className="panel-title">🙋 Pacientes cadastrados</div>
-          {usuarios.filter(u=>u.tipo==="paciente").length===0
-            ? <EmptyState icon="🙋" title="Nenhum paciente cadastrado" subtitle="Estudantes que criarem conta na plataforma aparecerão aqui." />
+          {pacientesFiltrados.length===0
+            ? <EmptyState icon="🙋" title={buscaUsuarios ? "Nenhum resultado" : "Nenhum paciente cadastrado"} subtitle={buscaUsuarios ? "Tente buscar por outro termo." : "Estudantes que criarem conta na plataforma aparecerão aqui."} />
             : <div className="tw"><table>
                 <thead><tr><th>Nome</th><th>E-mail</th><th>Matrícula</th><th>Cadastro</th></tr></thead>
-                <tbody>{usuarios.filter(u=>u.tipo==="paciente").map(u=>(
+                <tbody>{pacientesFiltrados.map(u=>(
                   <tr key={u.id}><td>{u.nome}</td><td>{u.email||"—"}</td><td>{u.matricula||"—"}</td><td>{fmt(u.created_at?.slice(0,10))}</td></tr>
                 ))}</tbody>
               </table></div>
@@ -1894,7 +2657,8 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
         </div>
       </>}
     </div>
-  );
+    );
+  }
 
   if (aba==="todos") return (
     <div>
@@ -1909,52 +2673,109 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
             <div className="kpi" key={st}><div className="kpi-num">{todos.filter(a=>a.status===st).length}</div><div className="kpi-label">{l}</div></div>
           ))}
         </div>
+        <SupervisorCharts todos={todos} psicos={psicos} />
         <div className="panel">
-          <div className="panel-title">📋 Todos os agendamentos</div>
+          <div className="panel-title" style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:8}}>
+            <span>📋 Todos os agendamentos</span>
+            {todos.length>0 && (
+              <button className="btn btn-sm btn-outline" onClick={() => exportarCSV(
+                `atendimentos-fumec-${new Date().toISOString().slice(0,10)}.csv`,
+                [
+                  {label:"Data", value:(r)=>fmt(r.data)},
+                  {label:"Hora", value:(r)=>fmtH(r.hora)},
+                  {label:"Paciente", value:"paciente_nome"},
+                  {label:"Psicólogo", value:"psicologo_nome"},
+                  {label:"Sessão", value:(r)=>`#${r.sessao_numero}`},
+                  {label:"Status", value:"status"},
+                  {label:"Observações", value:"observacoes"},
+                ],
+                todos
+              )}>⬇️ Exportar CSV</button>
+            )}
+          </div>
           {todos.length===0 ? (
             <EmptyState icon="📋" title="Nenhum agendamento ainda" subtitle="Quando pacientes marcarem consultas, todos os agendamentos da clínica aparecerão aqui." />
-          ) :
-            <div className="tw"><table>
-              <thead><tr><th>Data</th><th>Hora</th><th>Paciente</th><th>Psicólogo</th><th>Status</th></tr></thead>
-              <tbody>{todos.map(a=>(
-                <tr key={a.id}><td>{fmt(a.data)}</td><td>{fmtH(a.hora)}</td><td>{a.paciente_nome||"—"}</td>
-                  <td>{a.psicologo_nome||"—"}</td><td><span className={`st st-${a.status}`}>{a.status}</span></td></tr>
-              ))}</tbody>
-            </table></div>
-          }
+          ) : <>
+            <SearchBox value={buscaAtend} onChange={setBuscaAtend} placeholder="Buscar por paciente, psicólogo ou data..." />
+            <div className="filter-row">
+              {[["todos","Todos"],["pendente","Pendentes"],["confirmado","Confirmados"],["concluido","Concluídos"],["cancelado","Cancelados"]].map(([v,l])=>(
+                <button key={v} className={`filter-chip ${filtroStatus===v?"active":""}`} onClick={()=>setFiltroStatus(v)}>{l}</button>
+              ))}
+            </div>
+            {(() => {
+              const term = buscaAtend.toLowerCase();
+              const filtrados = todos.filter(a => {
+                if (filtroStatus!=="todos" && a.status!==filtroStatus) return false;
+                if (!term) return true;
+                return (a.paciente_nome||"").toLowerCase().includes(term)
+                  || (a.psicologo_nome||"").toLowerCase().includes(term)
+                  || fmt(a.data).includes(term);
+              });
+              if (filtrados.length===0) return <EmptyState icon="🔍" title="Nenhum resultado" subtitle="Tente buscar por outro termo ou mudar o filtro." />;
+              return (
+                <div className="tw"><table>
+                  <thead><tr><th>Data</th><th>Hora</th><th>Paciente</th><th>Psicólogo</th><th>Status</th><th>Observações</th></tr></thead>
+                  <tbody>{filtrados.map(a=>(
+                    <tr key={a.id}><td>{fmt(a.data)}</td><td>{fmtH(a.hora)}</td><td>{a.paciente_nome||"—"}</td>
+                      <td>{a.psicologo_nome||"—"}</td><td><span className={`st st-${a.status}`}>{a.status}</span></td>
+                      <td style={{maxWidth:220}}>{a.observacoes ? <span style={{fontSize:12.5,color:"var(--ink-2)"}}>{a.observacoes}</span> : <span style={{color:"var(--ink-3)"}}>—</span>}</td>
+                    </tr>
+                  ))}</tbody>
+                </table></div>
+              );
+            })()}
+          </>}
         </div>
       </>}
     </div>
   );
 
-  if (aba==="gerenciar") return (
+  if (aba==="gerenciar") {
+    const term = buscaGerenciar.toLowerCase();
+    const ativos = todos.filter(a=>a.status!=="cancelado"&&a.status!=="concluido");
+    const filtrados = ativos.filter(a => !term
+      || (a.paciente_nome||"").toLowerCase().includes(term)
+      || (a.psicologo_nome||"").toLowerCase().includes(term)
+      || fmt(a.data).includes(term)
+    );
+    return (
     <div>
       <div className="dash-title">⚙️ Gerenciar Agenda</div>
       <div className="dash-sub">Confirme, conclua ou cancele agendamentos</div>
+      <ConfirmModal config={confirmCfg} onClose={() => setConfirmCfg(null)} />
       {loading ? <Loading kind="table" rows={5} /> :
         <div className="panel">
           <div className="panel-title">🗂️ Agendamentos ativos</div>
-          {todos.filter(a=>a.status!=="cancelado"&&a.status!=="concluido").length===0
+          {ativos.length===0
             ? <EmptyState icon="✅" title="Tudo em ordem!" subtitle="Não há agendamentos pendentes de confirmação ou conclusão no momento." />
-            : <div className="tw"><table>
-                <thead><tr><th>Data</th><th>Hora</th><th>Paciente</th><th>Psicólogo</th><th>Status</th><th>Ações</th></tr></thead>
-                <tbody>{todos.filter(a=>a.status!=="cancelado"&&a.status!=="concluido").map(a=>(
+            : <>
+              <SearchBox value={buscaGerenciar} onChange={setBuscaGerenciar} placeholder="Buscar por paciente, psicólogo ou data..." />
+              {filtrados.length===0 ? (
+                <EmptyState icon="🔍" title="Nenhum resultado" subtitle="Tente buscar por outro termo." />
+              ) :
+              <div className="tw"><table>
+                <thead><tr><th>Data</th><th>Hora</th><th>Paciente</th><th>Psicólogo</th><th>Status</th><th>Observações</th><th>Ações</th></tr></thead>
+                <tbody>{filtrados.map(a=>(
                   <tr key={a.id}>
                     <td>{fmt(a.data)}</td><td>{fmtH(a.hora)}</td><td>{a.paciente_nome||"—"}</td><td>{a.psicologo_nome||"—"}</td>
                     <td><span className={`st st-${a.status}`}>{a.status}</span></td>
+                    <td style={{maxWidth:200}}>{a.observacoes ? <span style={{fontSize:12.5,color:"var(--ink-2)"}}>{a.observacoes}</span> : <span style={{color:"var(--ink-3)"}}>—</span>}</td>
                     <td style={{display:"flex",gap:6,flexWrap:"wrap"}}>
                       {a.status==="pendente"   && <button className="btn btn-sm btn-success" onClick={()=>atualizar(a.id,"confirmado")}>✅ Confirmar</button>}
                       {a.status==="confirmado" && <button className="btn btn-sm btn-success" onClick={()=>atualizar(a.id,"concluido")}>🟣 Concluir</button>}
-                      <button className="btn btn-sm btn-danger" onClick={()=>atualizar(a.id,"cancelado")}>❌ Cancelar</button>
+                      <button className="btn btn-sm btn-danger" onClick={()=>pedirCancelamentoAg(a)}>❌ Cancelar</button>
                     </td>
                   </tr>
                 ))}</tbody>
               </table></div>
+              }
+            </>
           }
         </div>
       }
     </div>
-  );
+    );
+  }
 
   if (aba==="feedback") return (
     <div>
@@ -2066,16 +2887,28 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
           ) : (
             mensagens.length===0
               ? <EmptyState icon="✉️" title="Nenhuma mensagem recebida" subtitle="Mensagens enviadas pelo formulário Fale Conosco do site aparecerão aqui." />
-              : mensagens.map(m=>(
-                <div className={`msg-card ${!m.lida?"unread":""}`} key={m.id} onClick={()=>marcarMsgLida(m)}>
-                  <div className="msg-card-hdr">
-                    <div className="msg-card-from">{m.nome}{!m.lida&&<span className="notif-count">Nova</span>}</div>
-                    <div className="msg-card-time">{m.created_at ? new Date(m.created_at).toLocaleDateString("pt-BR") : ""}</div>
-                  </div>
-                  <div className="msg-card-subject">{m.assunto}</div>
-                  <div className="msg-card-preview">{m.mensagem}</div>
-                </div>
-              ))
+              : <>
+                <SearchBox value={buscaUsuarios} onChange={setBuscaUsuarios} placeholder="Buscar por nome, assunto ou e-mail..." />
+                {(() => {
+                  const term = buscaUsuarios.toLowerCase();
+                  const filtradas = mensagens.filter(m => !term
+                    || m.nome.toLowerCase().includes(term)
+                    || m.assunto.toLowerCase().includes(term)
+                    || m.email.toLowerCase().includes(term)
+                  );
+                  if (filtradas.length===0) return <EmptyState icon="🔍" title="Nenhum resultado" subtitle="Tente buscar por outro termo." />;
+                  return filtradas.map(m=>(
+                    <div className={`msg-card ${!m.lida?"unread":""}`} key={m.id} onClick={()=>marcarMsgLida(m)}>
+                      <div className="msg-card-hdr">
+                        <div className="msg-card-from">{m.nome}{!m.lida&&<span className="notif-count">Nova</span>}</div>
+                        <div className="msg-card-time">{m.created_at ? new Date(m.created_at).toLocaleDateString("pt-BR") : ""}</div>
+                      </div>
+                      <div className="msg-card-subject">{m.assunto}</div>
+                      <div className="msg-card-preview">{m.mensagem}</div>
+                    </div>
+                  ));
+                })()}
+              </>
           )}
         </>}
       </div>
@@ -2086,6 +2919,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
     <div>
       <div className="dash-title">Olá, {profile.nome.split(" ")[0]}! 👩‍🏫</div>
       <div className="dash-sub">Painel de supervisão e administração da clínica</div>
+      <ConfirmModal config={confirmCfg} onClose={() => setConfirmCfg(null)} />
       {loading ? <>
         <Loading kind="kpi" rows={4} />
         <Loading kind="table" rows={4} />
@@ -2102,6 +2936,44 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
             </div>
           )}
         </div>
+
+        {/* Checklist de primeiros passos */}
+        {(() => {
+          const psicPend = usuarios.filter(u=>u.tipo==="psicologo"&&u.status==="pendente_aprovacao").length;
+          const supPend = usuarios.filter(u=>u.tipo==="supervisor"&&u.status==="pendente_aprovacao").length;
+          const agPend = todos.filter(a=>a.status==="pendente").length;
+          const msgPend = mensagens.filter(m=>!m.lida).length;
+          const psicAtivos = psicos.filter(p=>!p.status||p.status==="ativo").length;
+          const items = [
+            { done: supPend===0, label: supPend>0 ? `Aprovar ${supPend} supervisor(es) pendente(s)` : "Supervisores aprovados", aba:"usuarios" },
+            { done: psicPend===0, label: psicPend>0 ? `Ativar ${psicPend} psicólogo(s) pendente(s)` : "Psicólogos avaliados", aba:"usuarios" },
+            { done: psicAtivos>0, label: psicAtivos>0 ? "Há psicólogos ativos para atender" : "Ativar ao menos um psicólogo", aba:"usuarios" },
+            { done: agPend===0, label: agPend>0 ? `Revisar ${agPend} agendamento(s) pendente(s)` : "Agendamentos em dia", aba:"gerenciar" },
+            { done: msgPend===0, label: msgPend>0 ? `Responder ${msgPend} mensagem(ns) do Fale Conosco` : "Mensagens respondidas", aba:"mensagens" },
+          ];
+          const pendentes = items.filter(i=>!i.done);
+          if (pendentes.length===0) return null;
+          const totalDone = items.filter(i=>i.done).length;
+          return (
+            <div className="panel">
+              <div className="panel-title">✅ Primeiros passos ({totalDone}/{items.length} concluídos)</div>
+              <div style={{display:"flex",flexDirection:"column",gap:8}}>
+                {items.map((it,i)=>(
+                  <div key={i} onClick={()=>!it.done && setAba(it.aba)} style={{
+                    display:"flex",alignItems:"center",gap:10,padding:"10px 12px",
+                    borderRadius:"var(--r-sm)",background:it.done?"var(--green-bg)":"var(--bg-warm)",
+                    cursor:it.done?"default":"pointer",opacity:it.done?.7:1,
+                    border:`1px solid ${it.done?"transparent":"var(--border)"}`,
+                  }}>
+                    <span style={{fontSize:16}}>{it.done?"✅":"⬜"}</span>
+                    <span style={{fontSize:13.5,color:"var(--ink)",flex:1,textDecoration:it.done?"line-through":"none"}}>{it.label}</span>
+                    {!it.done && <span style={{fontSize:12,color:"var(--teal)",fontWeight:600}}>Resolver →</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Supervisores pendentes no início */}
         {usuarios.filter(u=>u.tipo==="supervisor"&&u.status==="pendente_aprovacao").length>0 && (
@@ -2146,16 +3018,19 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
             <div className="panel-title">⏳ Pendentes de aprovação</div>
             <div className="tw"><table>
               <thead><tr><th>Data</th><th>Hora</th><th>Paciente</th><th>Psicólogo</th><th>Ações</th></tr></thead>
-              <tbody>{todos.filter(a=>a.status==="pendente").map(a=>(
+              <tbody>{todos.filter(a=>a.status==="pendente").slice(0,5).map(a=>(
                 <tr key={a.id}>
                   <td>{fmt(a.data)}</td><td>{fmtH(a.hora)}</td><td>{a.paciente_nome||"—"}</td><td>{a.psicologo_nome||"—"}</td>
                   <td style={{display:"flex",gap:6}}>
                     <button className="btn btn-sm btn-success" onClick={()=>atualizar(a.id,"confirmado")}>✅ Confirmar</button>
-                    <button className="btn btn-sm btn-danger"  onClick={()=>atualizar(a.id,"cancelado")}>❌ Cancelar</button>
+                    <button className="btn btn-sm btn-danger"  onClick={()=>pedirCancelamentoAg(a)}>❌ Cancelar</button>
                   </td>
                 </tr>
               ))}</tbody>
             </table></div>
+            {todos.filter(a=>a.status==="pendente").length>5 && (
+              <button className="load-more-btn" onClick={() => setAba("gerenciar")}>Ver todos os {todos.filter(a=>a.status==="pendente").length} pendentes →</button>
+            )}
           </div>
         )}
         {psicos.length>0 && (
