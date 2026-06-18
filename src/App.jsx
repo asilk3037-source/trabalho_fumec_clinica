@@ -9,7 +9,7 @@ import {
   CloudRain, LifeBuoy, Clock, ArrowRight, ArrowLeft, User, Stethoscope, UserCog,
   Home, ClipboardList, BarChart3, Settings, PenLine, Camera, LogOut, Star,
   RefreshCw, CalendarDays, Save, Ban, Download, Circle, XCircle, Hourglass,
-  CheckCircle2, Info, PieChart, TrendingUp, FileText, FolderOpen,
+  CheckCircle2, Info, PieChart, TrendingUp, FileText, FolderOpen, ArrowUp,
 } from "lucide-react";
 
 
@@ -152,9 +152,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .hero-actions { display:flex; gap:12px; flex-wrap:wrap; }
 .hero-panel { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:20px; padding:2rem; backdrop-filter:blur(8px); }
 .hero-panel-title { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,.4); margin-bottom:1.25rem; }
-.hero-feat { display:flex; align-items:flex-start; gap:12px; padding:14px 0; border-bottom:1px solid rgba(255,255,255,.07); }
-.hero-feat:last-child { border-bottom:none; padding-bottom:0; }
-.hero-feat-icon { width:40px; height:40px; border-radius:10px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px; color:#fff; }
+.hero-feat { display:flex; align-items:flex-start; gap:12px; padding:14px 10px; margin:0 -10px; border-bottom:1px solid rgba(255,255,255,.07); border-radius:10px; transition:background-color .2s ease; }
+.hero-feat:last-child { border-bottom:none; }
+.hero-feat:hover { background:rgba(255,255,255,.045); }
+.hero-feat-icon { width:40px; height:40px; border-radius:10px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px; color:#fff; transition:transform .25s ease; }
+.hero-feat:hover .hero-feat-icon { transform:scale(1.08) rotate(-4deg); }
 .feat-teal { background:rgba(26,122,110,.25); } .feat-sky { background:rgba(21,101,192,.25); } .feat-amber { background:rgba(180,83,9,.2); }
 .hero-feat-text strong { display:block; font-size:14px; font-weight:600; color:#fff; margin-bottom:2px; }
 .hero-feat-text span { font-size:12.5px; color:rgba(255,255,255,.5); line-height:1.4; }
@@ -256,8 +258,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .form-btn:disabled { opacity:.6; cursor:not-allowed; }
 
 /* ── FOOTER ──────────────────────────────────────────────────── */
-footer { background:#07203A; color:rgba(255,255,255,.65); padding:3.5rem 2.5rem 1.75rem; position:relative; }
-footer::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--grad-brand); }
+.footer-wave { display:block; width:100%; height:54px; background:#07203A; line-height:0; }
+.footer-wave svg { display:block; width:100%; height:100%; }
+.footer-wave path { fill:var(--bg); transition:fill .3s ease; }
+footer { background:#07203A; color:rgba(255,255,255,.65); padding:3rem 2.5rem 1.75rem; position:relative; margin-top:-1px; }
+footer::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--grad-brand); opacity:.5; }
 .footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr; gap:3rem; margin-bottom:2.5rem; }
 .footer-brand p { font-size:13.5px; line-height:1.7; margin-top:10px; max-width:280px; }
 .footer-col h4 { font-family:var(--font-head); font-size:13px; font-weight:700; color:#fff; margin-bottom:1rem; text-transform:uppercase; letter-spacing:.5px; }
@@ -495,19 +500,30 @@ tr:hover td { background:#FAFBFC; }
 .btn:disabled { opacity:.55; cursor:not-allowed; }
 .btn-teal { background:var(--teal); color:#fff; }
 .btn-teal:hover { background:var(--teal-mid); transform:translateY(-1px); box-shadow:0 4px 14px rgba(26,122,110,.4); }
+.btn-teal:active, .nav-cta:active, .form-btn:active { transform:translateY(0) scale(.97); transition-duration:.08s; }
 .btn-teal::before, .nav-cta::before, .form-btn::before { content:''; position:absolute; top:0; left:-60%; width:45%; height:100%; background:linear-gradient(120deg, transparent, rgba(255,255,255,.4), transparent); transform:skewX(-20deg); transition:left .55s ease; pointer-events:none; }
 .btn-teal:hover::before, .nav-cta:hover::before, .form-btn:hover::before { left:130%; }
 .btn-ghost { background:rgba(255,255,255,.08); color:rgba(255,255,255,.85); border:1px solid rgba(255,255,255,.18); }
 .btn-ghost:hover { background:rgba(255,255,255,.14); }
+.btn-ghost:active { transform:scale(.97); }
 .btn-outline { background:transparent; color:var(--ink); border:1.5px solid var(--border-2); }
 .btn-outline:hover { background:var(--bg-warm); }
+.btn-outline:active { transform:scale(.97); }
 .btn-danger { background:var(--red-bg); color:var(--red); border:1px solid #F5C6C2; }
 .btn-danger:hover { background:#FADBD8; }
+.btn-danger:active, .btn-success:active { transform:scale(.97); }
 .btn-success { background:var(--green-bg); color:var(--green); border:1px solid #A7D7D2; }
 .btn-success:hover { background:#C5EBE8; }
 .btn-sm { padding:7px 14px; font-size:12.5px; border-radius:var(--r-xs); }
 .btn-xs { padding:3px 8px; font-size:11px; border-radius:var(--r-xs); border:1px solid var(--border); background:var(--bg); color:var(--ink-2); cursor:pointer; font-family:var(--font-body); }
 .btn-xs:hover { border-color:var(--teal); color:var(--teal); }
+.btn-xs:active { transform:scale(.95); }
+
+.scroll-top-btn { position:fixed; right:24px; bottom:24px; width:46px; height:46px; border-radius:50%; background:var(--teal); color:#fff; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 20px rgba(0,0,0,.25); z-index:200; opacity:0; transform:translateY(12px) scale(.85); pointer-events:none; transition:opacity .25s ease, transform .25s ease, background .18s; }
+.scroll-top-btn.visible { opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+.scroll-top-btn:hover { background:var(--teal-mid); transform:translateY(-2px) scale(1); }
+.scroll-top-btn:active { transform:scale(.92); }
+@media(max-width:600px) { .scroll-top-btn { right:16px; bottom:16px; width:42px; height:42px; } }
 
 /* ══════════════════════════════════════════════════════════════
    RESPONSIVE — MOBILE FIRST
@@ -929,9 +945,13 @@ export default function App() {
   const [contactBusy, setContactBusy] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
-    function onScroll() { setScrolled(window.scrollY > 8); }
+    function onScroll() {
+      setScrolled(window.scrollY > 8);
+      setShowScrollTop(window.scrollY > 600);
+    }
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -1364,6 +1384,12 @@ export default function App() {
         </div>
       </section>
 
+      <div className="footer-wave" aria-hidden="true">
+        <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
+          <path d="M0,40 C240,90 480,0 720,40 C960,80 1200,10 1440,50 L1440,100 L0,100 Z"/>
+        </svg>
+      </div>
+
       {/* FOOTER */}
       <footer>
         <div className="footer-grid">
@@ -1486,6 +1512,13 @@ export default function App() {
           </div>
         </div>
       )}
+      <button
+        className={`scroll-top-btn ${showScrollTop ? "visible" : ""}`}
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        aria-label="Voltar ao topo"
+      >
+        <ArrowUp size={20}/>
+      </button>
     </div>
   );
 }
