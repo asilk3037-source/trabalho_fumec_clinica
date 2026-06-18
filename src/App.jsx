@@ -72,9 +72,9 @@ const CSS = `
 [data-theme="dark"] .skel { background:linear-gradient(90deg, var(--border) 25%, #1B3650 50%, var(--border) 75%); background-size:200% 100%; }
 
 html { scroll-behavior:smooth; -webkit-font-smoothing:antialiased; }
-body { font-family:var(--font-body); color:var(--ink); background:var(--chrome); font-size:16px; line-height:1.6; min-height:100vh; }
+body { font-family:var(--font-body); color:var(--ink); background:var(--bg); font-size:16px; line-height:1.6; min-height:100vh; }
 body, .sec, .panel, .kpi, .user-card, .msg-card, .fb-card, .svc-card, .search-box, .dash-main, .modal, table td, table th { transition:background-color .3s ease, color .3s ease, border-color .3s ease; }
-.page-wrap { max-width:1160px; margin:0 auto; box-shadow:0 0 80px rgba(0,0,0,.35); overflow:hidden; }
+.page-wrap { background:var(--bg); }
 .sec { padding:5rem 2.5rem; background:var(--bg); margin:0; }
 .sec-alt { background-color:var(--bg-warm); background-image:radial-gradient(circle at 1px 1px, rgba(11,45,78,.07) 1px, transparent 0); background-size:26px 26px; }
 [data-theme="dark"] .sec-alt { background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1px, transparent 0); }
@@ -120,7 +120,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
 
 /* Mobile Drawer */
-.mobile-drawer { position:fixed; top:var(--nav-h); left:0; right:0; background:var(--chrome); z-index:250; padding:1rem 1.5rem 1.5rem; display:flex; flex-direction:column; gap:4px; transform:translateY(-110%); transition:transform .28s cubic-bezier(.4,0,.2,1); border-bottom:2px solid var(--teal); }
+.mobile-drawer { position:fixed; top:var(--nav-h); left:0; right:0; bottom:0; background:var(--chrome); z-index:250; padding:1rem 1.5rem 1.5rem; display:flex; flex-direction:column; gap:4px; transform:translateY(-110%); transition:transform .28s cubic-bezier(.4,0,.2,1); border-bottom:2px solid var(--teal); overflow-y:auto; }
 .mobile-drawer.open { transform:translateY(0); }
 .mob-link { color:rgba(255,255,255,.75); text-decoration:none; font-size:15px; font-weight:500; padding:11px 14px; border-radius:var(--r-sm); display:flex; align-items:center; gap:10px; transition:all .15s; background:none; border:none; cursor:pointer; font-family:var(--font-body); width:100%; text-align:left; }
 .mob-link:hover,.mob-link.on { background:rgba(26,122,110,.2); color:#5EEAD4; }
@@ -935,6 +935,11 @@ export default function App() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
 
   const [lEmail, setLE] = useState(""); const [lPass, setLP] = useState("");
   const [rName, setRN]  = useState(""); const [rEmail, setRE] = useState("");
