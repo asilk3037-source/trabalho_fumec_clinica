@@ -1,7 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabase";
 import iconApp from "./assets/icon-app.png";
-import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { BarChart, Bar, PieChart as RPieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import {
+  Sun, Moon, Inbox, X, AlertTriangle, HelpCircle, Search, Eye, EyeOff, KeyRound,
+  Pencil, Mail, Landmark, Calendar, Heart, Lock, GraduationCap, ShieldCheck, Scale,
+  MapPin, Brain, Handshake, Users, BookOpen, MessageCircle, Check, Target, Gem,
+  CloudRain, LifeBuoy, Clock, ArrowRight, ArrowLeft, User, Stethoscope, UserCog,
+  Home, ClipboardList, BarChart3, Settings, PenLine, Camera, LogOut, Star,
+  RefreshCw, CalendarDays, Save, Ban, Download, Circle, XCircle, Hourglass,
+  CheckCircle2, Info, PieChart, TrendingUp, FileText, FolderOpen,
+} from "lucide-react";
 
 
 // ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
@@ -145,7 +154,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .hero-panel-title { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,.4); margin-bottom:1.25rem; }
 .hero-feat { display:flex; align-items:flex-start; gap:12px; padding:14px 0; border-bottom:1px solid rgba(255,255,255,.07); }
 .hero-feat:last-child { border-bottom:none; padding-bottom:0; }
-.hero-feat-icon { width:40px; height:40px; border-radius:10px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px; }
+.hero-feat-icon { width:40px; height:40px; border-radius:10px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px; color:#fff; }
 .feat-teal { background:rgba(26,122,110,.25); } .feat-sky { background:rgba(21,101,192,.25); } .feat-amber { background:rgba(180,83,9,.2); }
 .hero-feat-text strong { display:block; font-size:14px; font-weight:600; color:#fff; margin-bottom:2px; }
 .hero-feat-text span { font-size:12.5px; color:rgba(255,255,255,.5); line-height:1.4; }
@@ -172,7 +181,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .svc-card::after { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; background:var(--grad-brand); transform:scaleX(0); transform-origin:left; transition:transform .3s; }
 .svc-card:hover { box-shadow:var(--glow-teal); transform:translateY(-6px); border-color:var(--teal-light); }
 .svc-card:hover::after { transform:scaleX(1); }
-.svc-icon { width:52px; height:52px; border-radius:var(--r-sm); overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:24px; margin-bottom:1.1rem; background:linear-gradient(135deg,var(--teal-light),rgba(255,255,255,0)); box-shadow:inset 0 0 0 1px rgba(26,122,110,.14); transition:transform .3s ease, box-shadow .3s ease; }
+.svc-icon { width:52px; height:52px; border-radius:var(--r-sm); overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:24px; color:var(--teal); margin-bottom:1.1rem; background:linear-gradient(135deg,var(--teal-light),rgba(255,255,255,0)); box-shadow:inset 0 0 0 1px rgba(26,122,110,.14); transition:transform .3s ease, box-shadow .3s ease; }
 .svc-card:hover .svc-icon { transform:scale(1.08) rotate(-4deg); box-shadow:inset 0 0 0 1px rgba(26,122,110,.14), 0 6px 18px rgba(26,122,110,.32); }
 .svc-card h3 { font-family:var(--font-head); font-size:14.5px; font-weight:700; margin-bottom:7px; color:var(--teal); }
 .svc-card p { font-size:13px; color:var(--ink-2); line-height:1.6; }
@@ -185,7 +194,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .check-mark { width:20px; height:20px; border-radius:50%; background:var(--teal-light); color:var(--teal); display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; }
 .pillar { background:var(--bg); border:1px solid var(--border); border-radius:var(--r); padding:1.5rem; margin-bottom:14px; display:flex; gap:14px; align-items:flex-start; transition:box-shadow .22s, transform .22s; }
 .pillar:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
-.pillar-icon { font-size:24px; flex-shrink:0; margin-top:2px; }
+.pillar-icon { font-size:24px; flex-shrink:0; margin-top:2px; color:var(--teal); display:flex; }
 .pillar h4 { font-family:var(--font-head); font-size:14.5px; font-weight:700; color:var(--ink); margin-bottom:5px; }
 .pillar p { font-size:13px; color:var(--ink-2); line-height:1.6; }
 
@@ -208,7 +217,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
 /* ── CRISIS ──────────────────────────────────────────────────── */
 .crisis-box { background:linear-gradient(135deg,#7F1D1D,#991B1B); border-radius:var(--r); padding:1.75rem 2rem; margin-top:2rem; display:flex; gap:1.25rem; align-items:flex-start; width:100%; }
-.crisis-icon { font-size:28px; flex-shrink:0; margin-top:2px; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.08); animation:pulseRing 2.4s ease-out infinite; }
+.crisis-icon { font-size:28px; color:#fff; flex-shrink:0; margin-top:2px; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.08); animation:pulseRing 2.4s ease-out infinite; }
 .crisis-box h4 { font-family:var(--font-head); font-size:15.5px; font-weight:700; color:#fff; margin-bottom:6px; }
 .crisis-box p { font-size:13.5px; color:rgba(255,255,255,.78); line-height:1.65; }
 .crisis-box a { color:#FCA5A5; font-weight:600; text-decoration:none; }
@@ -229,7 +238,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 /* ── CONTACT ─────────────────────────────────────────────────── */
 .contact-grid { display:grid; grid-template-columns:1fr 1.3fr; gap:4rem; align-items:start; }
 .cinfo-row { display:flex; align-items:flex-start; gap:13px; margin-bottom:1.25rem; }
-.cinfo-ic { width:40px; height:40px; border-radius:var(--r-sm); background:var(--teal-light); display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.cinfo-ic { width:40px; height:40px; border-radius:var(--r-sm); background:var(--teal-light); color:var(--teal); display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
 .cinfo-ic-text strong { display:block; font-size:13.5px; font-weight:600; color:var(--ink); }
 .cinfo-ic-text span { font-size:13px; color:var(--ink-2); }
 .warn-notice { background:var(--amber-bg); border:1px solid #FDE68A; border-radius:var(--r-sm); padding:1rem 1.25rem; font-size:13px; color:var(--amber); margin-top:1.5rem; line-height:1.6; }
@@ -338,6 +347,7 @@ footer::before { content:''; position:absolute; top:0; left:0; right:0; height:3
 /* ── TOAST ───────────────────────────────────────────────────── */
 .toast { position:fixed; bottom:24px; right:16px; z-index:9999; display:flex; flex-direction:column; gap:8px; pointer-events:none; }
 .toast-item { padding:12px 18px; border-radius:var(--r-sm); font-size:13.5px; font-weight:600; box-shadow:var(--shadow-lg); animation:slideIn .25s ease; pointer-events:auto; display:flex; align-items:center; gap:10px; min-width:260px; max-width:calc(100vw - 32px); }
+.toast-icon { flex-shrink:0; display:flex; }
 .toast-close { background:rgba(255,255,255,.15); border:none; color:#fff; width:20px; height:20px; border-radius:50%; font-size:11px; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:background .15s; }
 .toast-close:hover { background:rgba(255,255,255,.3); }
 .toast-ok { background:#065F46; color:#fff; }
@@ -659,7 +669,7 @@ function ThemeToggle({ theme, setTheme, className = "" }) {
       title={theme === "dark" ? "Modo claro" : "Modo escuro"}
       aria-label="Alternar tema"
     >
-      {theme === "dark" ? "☀️" : "🌙"}
+      {theme === "dark" ? <Sun size={16}/> : <Moon size={16}/>}
     </button>
   );
 }
@@ -752,7 +762,7 @@ function Loading({ rows = 3, kind = "cards" }) {
 
 // ─── EMPTY STATE ──────────────────────────────────────────────────────────────
 /** Estado vazio ilustrado com ícone grande, texto e CTA opcional */
-function EmptyState({ icon = "📭", title, subtitle, ctaLabel, onCta }) {
+function EmptyState({ icon = <Inbox size={34}/>, title, subtitle, ctaLabel, onCta }) {
   return (
     <div className="empty-state">
       <div className="empty-state-icon">{icon}</div>
@@ -789,8 +799,8 @@ function ConfirmModal({ config, onClose }) {
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal" style={{maxWidth:420}} onClick={e => e.stopPropagation()}>
-        <button className="modal-x" onClick={onClose}>✕</button>
-        <div style={{fontSize:38,marginBottom:10}}>{danger ? "⚠️" : "❓"}</div>
+        <button className="modal-x" onClick={onClose}><X size={16}/></button>
+        <div style={{marginBottom:10,color:danger?"var(--red)":"var(--teal)"}}>{danger ? <AlertTriangle size={34}/> : <HelpCircle size={34}/>}</div>
         <h3 style={{fontFamily:"var(--font-head)",fontSize:18,fontWeight:800,color:"var(--ink)",marginBottom:8}}>{title}</h3>
         <p style={{fontSize:14,color:"var(--ink-2)",lineHeight:1.6,marginBottom:extra?12:20}}>{message}</p>
         {extra}
@@ -809,9 +819,9 @@ function ConfirmModal({ config, onClose }) {
 function SearchBox({ value, onChange, placeholder = "Buscar..." }) {
   return (
     <div className="search-box">
-      <span className="search-box-icon">🔍</span>
+      <span className="search-box-icon"><Search size={15}/></span>
       <input type="text" value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} />
-      {value && <button className="search-box-clear" onClick={() => onChange("")}>✕</button>}
+      {value && <button className="search-box-clear" onClick={() => onChange("")}><X size={11}/></button>}
     </div>
   );
 }
@@ -829,7 +839,7 @@ function PasswordInput({ value, onChange, placeholder = "••••••", on
         onKeyDown={onKeyDown}
       />
       <button type="button" className="pwd-toggle" onClick={() => setShow(s => !s)} tabIndex={-1}>
-        {show ? "🙈" : "👁️"}
+        {show ? <EyeOff size={16}/> : <Eye size={16}/>}
       </button>
     </div>
   );
@@ -852,14 +862,14 @@ function EmailEditField({ uid, currentEmail, onUpdated }) {
     if (profErr) { toast(`E-mail de confirmação enviado, mas houve erro ao atualizar o perfil: ${profErr.message}`, "err"); }
     onUpdated(value);
     setEditing(false);
-    toast("✅ Enviamos um e-mail de confirmação para o novo endereço. Verifique sua caixa de entrada para concluir a troca.");
+    toast("Enviamos um e-mail de confirmação para o novo endereço. Verifique sua caixa de entrada para concluir a troca.");
   }
 
   if (!editing) {
     return (
       <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
         <span style={{fontSize:13.5,color:"var(--ink-2)"}}>{currentEmail || "—"}</span>
-        <button className="btn btn-sm btn-outline" onClick={() => { setValue(currentEmail||""); setEditing(true); }}>✏️ Editar e-mail</button>
+        <button className="btn btn-sm btn-outline" onClick={() => { setValue(currentEmail||""); setEditing(true); }}><Pencil size={13}/> Editar e-mail</button>
       </div>
     );
   }
@@ -888,14 +898,16 @@ function toast(msg, type = "ok") {
   const duration = type === "err" ? 6500 : 3500;
   setTimeout(() => _setToasts(p => p.filter(t => t.id !== id)), duration);
 }
+const TOAST_ICONS = { ok: <CheckCircle2 size={18}/>, err: <AlertTriangle size={18}/>, info: <Hourglass size={18}/> };
 function Toasts() {
   const toasts = useToastSetup();
   return (
     <div className="toast">
       {toasts.map(t => (
         <div key={t.id} className={`toast-item toast-${t.type}`}>
+          <span className="toast-icon">{TOAST_ICONS[t.type] || TOAST_ICONS.ok}</span>
           <span style={{flex:1}}>{t.msg}</span>
-          <button className="toast-close" onClick={() => _setToasts(p => p.filter(x => x.id !== t.id))}>✕</button>
+          <button className="toast-close" onClick={() => _setToasts(p => p.filter(x => x.id !== t.id))}><X size={14}/></button>
         </div>
       ))}
     </div>
@@ -974,7 +986,7 @@ export default function App() {
     if (error) { setErr("E-mail ou senha incorretos."); setBusy(false); return; }
     setUser(data.user); await loadProfile(data.user.id);
     setBusy(false); setModal(false); setPage("dashboard");
-    toast("✅ Bem-vindo(a)!");
+    toast("Bem-vindo(a)!");
   }
 
   async function enviarRecuperacao() {
@@ -996,7 +1008,7 @@ export default function App() {
     const { error } = await supabase.auth.updateUser({ password: newPass1 });
     setResetBusy(false);
     if (error) { setResetErr(error.message); return; }
-    toast("✅ Senha atualizada com sucesso! Faça login novamente.");
+    toast("Senha atualizada com sucesso! Faça login novamente.");
     await supabase.auth.signOut();
     setNewPass1(""); setNewPass2("");
     setPage("home");
@@ -1029,11 +1041,11 @@ export default function App() {
 
     if (role === "paciente") {
       setPage("dashboard");
-      toast("✅ Conta criada com sucesso!");
+      toast("Conta criada com sucesso!");
     } else if (role === "psicologo") {
-      toast("⏳ Conta criada! Aguardando aprovação de um supervisor para liberar seus atendimentos.", "info");
+      toast("Conta criada! Aguardando aprovação de um supervisor para liberar seus atendimentos.", "info");
     } else {
-      toast("⏳ Conta criada! Aguardando aprovação de um supervisor já cadastrado.", "info");
+      toast("Conta criada! Aguardando aprovação de um supervisor já cadastrado.", "info");
     }
   }
 
@@ -1049,12 +1061,12 @@ export default function App() {
     });
     setContactBusy(false);
     if (error) {
-      if (error.code === "42P01") toast("⚠️ Execute a migration SQL para habilitar o Fale Conosco.", "err");
+      if (error.code === "42P01") toast("Execute a migration SQL para habilitar o Fale Conosco.", "err");
       else toast("Erro ao enviar. Tente novamente.", "err");
       return;
     }
     setCNome(""); setCMat(""); setCEmail(""); setCAssunto(""); setCMsg("");
-    toast("✅ Mensagem enviada! Retornaremos em breve.");
+    toast("Mensagem enviada! Retornaremos em breve.");
   }
 
   if (page === "reset-password") {
@@ -1068,7 +1080,7 @@ export default function App() {
         </nav>
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"calc(100vh - var(--nav-h))",padding:"1.25rem",background:"var(--bg-warm)"}}>
           <div style={{textAlign:"center",maxWidth:420,width:"100%",background:"var(--bg)",borderRadius:"var(--r)",padding:"2.5rem 1.5rem",boxShadow:"var(--shadow-md)"}}>
-            <div style={{fontSize:48,marginBottom:"1rem"}}>🔑</div>
+            <div style={{marginBottom:"1rem",color:"var(--teal)",display:"flex",justifyContent:"center"}}><KeyRound size={44}/></div>
             <h2 style={{fontFamily:"var(--font-head)",fontSize:20,marginBottom:6,color:"var(--ink)"}}>Defina sua nova senha</h2>
             <p style={{fontSize:13,color:"var(--ink-2)",marginBottom:"1.5rem"}}>Escolha uma nova senha para sua conta.</p>
             <div className="fg" style={{textAlign:"left"}}>
@@ -1079,7 +1091,7 @@ export default function App() {
               <label>Confirmar nova senha</label>
               <PasswordInput value={newPass2} onChange={e=>setNewPass2(e.target.value)} onKeyDown={e=>e.key==="Enter"&&salvarNovaSenha()} />
             </div>
-            {resetErr && <div className="msg-err">⚠️ {resetErr}</div>}
+            {resetErr && <div className="msg-err"><AlertTriangle size={13} style={{verticalAlign:"-2px"}}/> {resetErr}</div>}
             <button className="form-btn" style={{marginTop:8}} onClick={salvarNovaSenha} disabled={resetBusy}>
               {resetBusy ? <><Spin/> Salvando...</> : "Salvar nova senha"}
             </button>
@@ -1100,12 +1112,12 @@ export default function App() {
             <a className="nav-logo"><Logo size={34} light/><div className="nav-logo-text"><strong>FUMEC</strong><span>Clínica Escola · Psicologia</span></div></a>
             <ul className="nav-links">
               <li><ThemeToggle theme={theme} setTheme={setTheme}/></li>
-              <li><button className="nav-link" onClick={logout}>Sair →</button></li>
+              <li><button className="nav-link" onClick={logout}>Sair <ArrowRight size={13}/></button></li>
             </ul>
           </nav>
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"calc(100vh - var(--nav-h))",padding:"1.25rem",background:"var(--bg-warm)"}}>
             <div style={{textAlign:"center",maxWidth:480,width:"100%",background:"var(--bg)",borderRadius:"var(--r)",padding:"2.5rem 1.5rem",boxShadow:"var(--shadow-md)"}}>
-              <div style={{fontSize:56,marginBottom:"1rem"}}>⏳</div>
+              <div style={{marginBottom:"1rem",color:"var(--amber)",display:"flex",justifyContent:"center"}}><Hourglass size={50}/></div>
               <h2 style={{fontFamily:"var(--font-head)",fontSize:22,marginBottom:"1rem",color:"var(--ink)"}}>Aguardando aprovação</h2>
               <p style={{color:"var(--ink-2)",marginBottom:"0.5rem",lineHeight:1.7,fontSize:14}}>
                 {isPsi
@@ -1117,7 +1129,7 @@ export default function App() {
                 {isPsi ? "Você poderá fazer login e gerenciar sua agenda assim que for ativado." : "Você terá acesso completo ao painel assim que for aprovado."}
               </p>
               <div style={{background:"var(--teal-light)",borderRadius:"var(--r-sm)",padding:"0.85rem",marginBottom:"1.5rem",fontSize:12.5,color:"var(--teal)",wordBreak:"break-all"}}>
-                📧 Logado como: <strong>{profile.email}</strong>
+                <Mail size={13} style={{verticalAlign:"-2px"}}/> Logado como: <strong>{profile.email}</strong>
               </div>
               <button className="btn btn-outline" onClick={logout}>Sair da conta</button>
             </div>
@@ -1162,7 +1174,7 @@ export default function App() {
 
       {/* MOBILE DRAWER */}
       <div className={`mobile-drawer ${menuOpen?"open":""}`}>
-        {[["#inicio","🏠","Início"],["#sobre","ℹ️","Sobre"],["#servicos","🧠","Serviços"],["#faq","❓","Dúvidas"],["#contato","✉️","Fale Conosco"]].map(([h,ic,l]) => (
+        {[["#inicio",<Home size={16}/>,"Início"],["#sobre",<Info size={16}/>,"Sobre"],["#servicos",<Brain size={16}/>,"Serviços"],["#faq",<HelpCircle size={16}/>,"Dúvidas"],["#contato",<Mail size={16}/>,"Fale Conosco"]].map(([h,ic,l]) => (
           <a key={l} href={h} className="mob-link" onClick={() => setMenuOpen(false)}><span>{ic}</span>{l}</a>
         ))}
         <button className="mob-link mob-cta" onClick={() => { setModal(true); setMenuOpen(false); }}>Entrar / Cadastrar</button>
@@ -1171,20 +1183,20 @@ export default function App() {
       {/* HERO */}
       <section className="hero" id="inicio">
         <div>
-          <div className="hero-eyebrow">🏛️ Universidade FUMEC — Belo Horizonte</div>
+          <div className="hero-eyebrow"><Landmark size={13}/> Universidade FUMEC — Belo Horizonte</div>
           <h1>Cuidar da sua mente é parte da <em>sua formação</em></h1>
           <p className="hero-sub">A Clínica Escola de Psicologia oferece atendimento gratuito, ético e humanizado para estudantes que precisam de apoio emocional e psicológico.</p>
           <div className="hero-actions">
-            <button className="btn btn-teal" onClick={() => setModal(true)}>📅 Agendar consulta</button>
-            <a href="#sobre" className="btn btn-ghost">Conheça a clínica →</a>
+            <button className="btn btn-teal" onClick={() => setModal(true)}><Calendar size={16}/> Agendar consulta</button>
+            <a href="#sobre" className="btn btn-ghost">Conheça a clínica <ArrowRight size={14}/></a>
           </div>
         </div>
         <div className="hero-panel">
           <div className="hero-panel-title">Por que escolher nossa clínica</div>
           {[
-            ["feat-teal","💙","Atendimento 100% gratuito","Para todos os estudantes matriculados na FUMEC."],
-            ["feat-sky","🔒","Sigilo garantido por lei","Ética profissional conforme o Código de Ética do CFP."],
-            ["feat-amber","🎓","Supervisionado por especialistas","Estagiários orientados por psicólogos experientes."],
+            ["feat-teal",<Heart size={18}/>,"Atendimento 100% gratuito","Para todos os estudantes matriculados na FUMEC."],
+            ["feat-sky",<Lock size={18}/>,"Sigilo garantido por lei","Ética profissional conforme o Código de Ética do CFP."],
+            ["feat-amber",<GraduationCap size={18}/>,"Supervisionado por especialistas","Estagiários orientados por psicólogos experientes."],
           ].map(([cls,ic,t,s]) => (
             <div className="hero-feat" key={t}>
               <div className={`hero-feat-icon ${cls}`}>{ic}</div>
@@ -1196,8 +1208,8 @@ export default function App() {
 
       {/* STRIP */}
       <div className="strip">
-        {[["🎓","100%","Gratuito para estudantes"],["🔐","LGPD","Dados protegidos por lei"],["⚖️","CFP","Regido pelo Código de Ética"],["📍","BH","Belo Horizonte · MG"]].map(([ic,n,l]) => (
-          <div className="strip-item" key={n}><div className="strip-num">{ic} {n}</div><div className="strip-label">{l}</div></div>
+        {[[<GraduationCap size={18}/>,"100%","Gratuito para estudantes"],[<ShieldCheck size={18}/>,"LGPD","Dados protegidos por lei"],[<Scale size={18}/>,"CFP","Regido pelo Código de Ética"],[<MapPin size={18}/>,"BH","Belo Horizonte · MG"]].map(([ic,n,l]) => (
+          <div className="strip-item" key={n}><div className="strip-num" style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>{ic} {n}</div><div className="strip-label">{l}</div></div>
         ))}
       </div>
 
@@ -1210,14 +1222,14 @@ export default function App() {
         </div>
         <div className="services-grid reveal">
           {[
-            ["🧠","Atendimento individual","Sessões de psicoterapia conduzidas por estagiários supervisionados."],
-            ["📅","Agendamento online","Marque sua consulta a qualquer hora diretamente pela plataforma."],
-            ["🤝","Entrevista de acolhimento","Conversa inicial para entender sua necessidade e indicar o caminho certo."],
-            ["👥","Grupos e oficinas","Encontros em grupo sobre autoestima, gestão emocional e vida acadêmica."],
-            ["📚","Conteúdos de apoio","Materiais sobre ansiedade, depressão e saúde mental estudantil."],
-            ["🔒","Sigilo total","Todas as informações tratadas com confidencialidade absoluta."],
-            ["🎓","Formação supervisionada","Estagiários orientados por psicólogos com CRP ativo durante todo o atendimento."],
-            ["💬","Acompanhamento contínuo","Sessões regulares para evolução e suporte emocional ao longo da vida acadêmica."],
+            [<Brain size={24}/>,"Atendimento individual","Sessões de psicoterapia conduzidas por estagiários supervisionados."],
+            [<Calendar size={24}/>,"Agendamento online","Marque sua consulta a qualquer hora diretamente pela plataforma."],
+            [<Handshake size={24}/>,"Entrevista de acolhimento","Conversa inicial para entender sua necessidade e indicar o caminho certo."],
+            [<Users size={24}/>,"Grupos e oficinas","Encontros em grupo sobre autoestima, gestão emocional e vida acadêmica."],
+            [<BookOpen size={24}/>,"Conteúdos de apoio","Materiais sobre ansiedade, depressão e saúde mental estudantil."],
+            [<Lock size={24}/>,"Sigilo total","Todas as informações tratadas com confidencialidade absoluta."],
+            [<GraduationCap size={24}/>,"Formação supervisionada","Estagiários orientados por psicólogos com CRP ativo durante todo o atendimento."],
+            [<MessageCircle size={24}/>,"Acompanhamento contínuo","Sessões regulares para evolução e suporte emocional ao longo da vida acadêmica."],
           ].map(([ic,t,d]) => (
             <div className="svc-card" key={t}>
               <div className="svc-icon">{ic}</div>
@@ -1239,14 +1251,14 @@ export default function App() {
             <p>Mais do que um serviço clínico, somos um espaço seguro de escuta, acolhimento e cuidado — onde cada sessão é levada a sério e cada pessoa é tratada com ética e respeito.</p>
             <ul className="about-check">
               {["Vinculada à Universidade FUMEC","Supervisionada por psicólogos CRP ativos","Segue integralmente o Código de Ética do CFP","Atendimento presencial em Belo Horizonte","Plataforma digital desenvolvida por alunos de SI"].map(i => (
-                <li key={i}><div className="check-mark">✓</div>{i}</li>
+                <li key={i}><div className="check-mark"><Check size={12}/></div>{i}</li>
               ))}
             </ul>
           </div>
           <div className="reveal">
-            {[["🎯","Missão","Promover saúde mental e bem-estar para estudantes da FUMEC por meio de atendimento psicológico acessível, gratuito e eticamente orientado."],
-              ["👁","Visão","Tornar-se referência em apoio psicológico universitário em Belo Horizonte, integrando tecnologia, cuidado humano e formação de qualidade."],
-              ["💎","Valores","Ética, sigilo, acolhimento, responsabilidade, inclusão e respeito à diversidade de cada pessoa atendida."],
+            {[[<Target size={22}/>,"Missão","Promover saúde mental e bem-estar para estudantes da FUMEC por meio de atendimento psicológico acessível, gratuito e eticamente orientado."],
+              [<Eye size={22}/>,"Visão","Tornar-se referência em apoio psicológico universitário em Belo Horizonte, integrando tecnologia, cuidado humano e formação de qualidade."],
+              [<Gem size={22}/>,"Valores","Ética, sigilo, acolhimento, responsabilidade, inclusão e respeito à diversidade de cada pessoa atendida."],
             ].map(([ic,t,d]) => (
               <div className="pillar" key={t}>
                 <div className="pillar-icon">{ic}</div>
@@ -1266,18 +1278,18 @@ export default function App() {
         </div>
         <div className="rec-grid reveal">
           {[
-            ["rh-teal","rd-teal","😰 Ansiedade e Estresse","Como identificar e lidar",["O que é ansiedade?","Sinais de alerta","Técnicas de respiração","Quando buscar ajuda"]],
-            ["rh-navy","rd-navy","😔 Depressão","Informação e acolhimento",["Tristeza vs. depressão","Sintomas mais comuns","Como apoiar alguém","Tratamentos disponíveis"]],
-            ["rh-plum","rd-plum","📖 Vida Acadêmica","Saúde mental na faculdade",["Síndrome do impostor","Procrastinação e foco","Gestão do tempo","Equilíbrio estudo e vida"]],
-          ].map(([hcls,dcls,t,s,items]) => (
+            ["rh-teal","rd-teal",<AlertTriangle size={18}/>,"Ansiedade e Estresse","Como identificar e lidar",["O que é ansiedade?","Sinais de alerta","Técnicas de respiração","Quando buscar ajuda"]],
+            ["rh-navy","rd-navy",<CloudRain size={18}/>,"Depressão","Informação e acolhimento",["Tristeza vs. depressão","Sintomas mais comuns","Como apoiar alguém","Tratamentos disponíveis"]],
+            ["rh-plum","rd-plum",<BookOpen size={18}/>,"Vida Acadêmica","Saúde mental na faculdade",["Síndrome do impostor","Procrastinação e foco","Gestão do tempo","Equilíbrio estudo e vida"]],
+          ].map(([hcls,dcls,ic,t,s,items]) => (
             <div className="rec-card" key={t}>
-              <div className={`rec-head ${hcls}`}><h3>{t}</h3><p>{s}</p></div>
+              <div className={`rec-head ${hcls}`}><h3 style={{display:"flex",alignItems:"center",gap:8}}>{ic} {t}</h3><p>{s}</p></div>
               <div className="rec-body"><ul>{items.map(i => <li key={i}><span className={`rec-dot ${dcls}`}></span>{i}</li>)}</ul></div>
             </div>
           ))}
         </div>
         <div className="crisis-box reveal">
-          <div className="crisis-icon">🆘</div>
+          <div className="crisis-icon"><LifeBuoy size={22}/></div>
           <div>
             <h4>Está em crise agora? Você não precisa enfrentar isso sozinho.</h4>
             <p>
@@ -1316,13 +1328,13 @@ export default function App() {
         <div className="contact-grid reveal">
           <div>
             <h3 style={{fontFamily:"var(--font-head)",fontSize:18,fontWeight:700,marginBottom:"1.5rem",color:"var(--ink)"}}>Informações de contato</h3>
-            {[["📍","Endereço","Universidade FUMEC — Belo Horizonte, MG"],["✉️","E-mail","clinicaescola@fumec.br"],["🕐","Horário de funcionamento","Segunda a sexta, das 8h às 18h"]].map(([ic,l,v]) => (
+            {[[<MapPin size={18}/>,"Endereço","Universidade FUMEC — Belo Horizonte, MG"],[<Mail size={18}/>,"E-mail","clinicaescola@fumec.br"],[<Clock size={18}/>,"Horário de funcionamento","Segunda a sexta, das 8h às 18h"]].map(([ic,l,v]) => (
               <div className="cinfo-row" key={l}>
                 <div className="cinfo-ic">{ic}</div>
                 <div className="cinfo-ic-text"><strong>{l}</strong><span>{v}</span></div>
               </div>
             ))}
-            <div className="warn-notice">⚠️ <strong>Atenção:</strong> Esta não é uma linha de crise. Em situação de emergência, ligue <strong>188 (CVV)</strong> ou vá ao pronto-socorro mais próximo.</div>
+            <div className="warn-notice" style={{display:"flex",gap:8,alignItems:"flex-start"}}><AlertTriangle size={16} style={{flexShrink:0,marginTop:2}}/> <span><strong>Atenção:</strong> Esta não é uma linha de crise. Em situação de emergência, ligue <strong>188 (CVV)</strong> ou vá ao pronto-socorro mais próximo.</span></div>
           </div>
           <div className="form-card">
             <div className="fg form-row">
@@ -1373,7 +1385,7 @@ export default function App() {
         <div className="footer-bot">
           <p>© 2026 Universidade FUMEC · Todos os direitos reservados</p>
           <div style={{display:"flex",gap:10,alignItems:"center"}}>
-            <span className="lgpd">🔒 LGPD Conforme</span>
+            <span className="lgpd" style={{display:"inline-flex",alignItems:"center",gap:4}}><Lock size={11}/> LGPD Conforme</span>
             <a href="#" style={{color:"rgba(255,255,255,.4)",fontSize:12}}>Política de privacidade</a>
           </div>
         </div>
@@ -1383,7 +1395,7 @@ export default function App() {
       {modal && (
         <div className="overlay" onClick={() => setModal(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
-            <button className="modal-x" onClick={() => setModal(false)}>✕</button>
+            <button className="modal-x" onClick={() => setModal(false)}><X size={16}/></button>
             <div className="modal-logo">
               <Logo size={38}/>
               <div className="modal-logo-text"><strong>FUMEC</strong><span>Clínica Escola de Psicologia</span></div>
@@ -1395,7 +1407,7 @@ export default function App() {
                 </h3>
                 {resetSent ? (
                   <div className="al al-ok" style={{textAlign:"center",lineHeight:1.6}}>
-                    📧 Enviamos um link de recuperação para <strong>{resetEmail}</strong>. Abra seu e-mail e siga as instruções para definir uma nova senha.
+                    <Mail size={14} style={{verticalAlign:"-2px"}}/> Enviamos um link de recuperação para <strong>{resetEmail}</strong>. Abra seu e-mail e siga as instruções para definir uma nova senha.
                   </div>
                 ) : (
                   <>
@@ -1406,7 +1418,7 @@ export default function App() {
                       <label>E-mail</label>
                       <input type="email" value={resetEmail} onChange={e=>setResetEmail(e.target.value)} placeholder="seu@email.com" onKeyDown={e=>e.key==="Enter"&&enviarRecuperacao()}/>
                     </div>
-                    {resetErr && <div className="msg-err">⚠️ {resetErr}</div>}
+                    {resetErr && <div className="msg-err"><AlertTriangle size={13} style={{verticalAlign:"-2px"}}/> {resetErr}</div>}
                     <button className="form-btn" onClick={enviarRecuperacao} disabled={resetBusy}>
                       {resetBusy ? <><Spin/> Enviando...</> : "Enviar link de recuperação"}
                     </button>
@@ -1417,7 +1429,7 @@ export default function App() {
                   style={{width:"100%",marginTop:12}}
                   onClick={() => { setForgotMode(false); setResetSent(false); setResetErr(""); setResetEmail(""); }}
                 >
-                  ← Voltar ao login
+                  <ArrowLeft size={14} style={{verticalAlign:"-2px"}}/> Voltar ao login
                 </button>
               </>
             ) : (
@@ -1430,7 +1442,7 @@ export default function App() {
               <>
                 <div className="fg"><label>E-mail</label><input type="email" value={lEmail} onChange={e=>setLE(e.target.value)} placeholder="seu@email.com"/></div>
                 <div className="fg"><label>Senha</label><PasswordInput value={lPass} onChange={e=>setLP(e.target.value)} onKeyDown={e=>e.key==="Enter"&&doLogin()}/></div>
-                {err && <div className="msg-err">⚠️ {err}</div>}
+                {err && <div className="msg-err"><AlertTriangle size={13} style={{verticalAlign:"-2px"}}/> {err}</div>}
                 <button className="form-btn" onClick={doLogin} disabled={busy}>{busy?<><Spin/> Entrando...</>:"Entrar"}</button>
                 <button
                   className="nav-link"
@@ -1444,7 +1456,7 @@ export default function App() {
               <>
                 <p style={{fontSize:13,color:"var(--ink-2)",marginBottom:"1rem"}}>Selecione o tipo de conta:</p>
                 <div className="role-grid">
-                  {[["paciente","🙋","Paciente"],["psicologo","🧑‍⚕️","Psicólogo"],["supervisor","👩‍🏫","Supervisor"]].map(([v,ic,l]) => (
+                  {[["paciente",<User size={22}/>,"Paciente"],["psicologo",<Stethoscope size={22}/>,"Psicólogo"],["supervisor",<UserCog size={22}/>,"Supervisor"]].map(([v,ic,l]) => (
                     <button key={v} className={`role-btn ${role===v?"active":""}`} onClick={() => setRole(v)}>
                       <span className="ri">{ic}</span>{l}
                     </button>
@@ -1452,7 +1464,7 @@ export default function App() {
                 </div>
                 {role === "supervisor" && (
                   <div className="al al-warn" style={{marginBottom:"1rem"}}>
-                    ⚠️ Contas de supervisor precisam ser aprovadas por outro supervisor já cadastrado antes do primeiro acesso.
+                    <AlertTriangle size={14} style={{verticalAlign:"-2px"}}/> Contas de supervisor precisam ser aprovadas por outro supervisor já cadastrado antes do primeiro acesso.
                   </div>
                 )}
                 <div className="fg"><label>Nome completo *</label><input value={rName} onChange={e=>setRN(e.target.value)} placeholder="Seu nome"/></div>
@@ -1460,7 +1472,7 @@ export default function App() {
                 {role==="paciente"  && <div className="fg"><label>Matrícula FUMEC</label><input value={rMat} onChange={e=>setRM(e.target.value)} placeholder="20240001"/></div>}
                 {role!=="paciente"  && <div className="fg"><label>CRP</label><input value={rCrp} onChange={e=>setRC(e.target.value)} placeholder="04/12345"/></div>}
                 <div className="fg"><label>Senha * (mín. 6 caracteres)</label><PasswordInput value={rPass} onChange={e=>setRP(e.target.value)}/></div>
-                {err && <div className="msg-err">⚠️ {err}</div>}
+                {err && <div className="msg-err"><AlertTriangle size={13} style={{verticalAlign:"-2px"}}/> {err}</div>}
                 <button className="form-btn" onClick={doRegister} disabled={busy}>{busy?<><Spin/> Criando conta...</>:"Criar minha conta"}</button>
               </>
             )}
@@ -1485,9 +1497,9 @@ function Dashboard({ user, profile, onLogout, onProfileUpdate, theme, setTheme }
     el.classList.add("tab-fade");
   }, [aba]);
   const MENUS = {
-    paciente:   [{id:"inicio",ic:"🏠",l:"Início"},{id:"perfil",ic:"👤",l:"Meu Perfil"},{id:"agendar",ic:"📅",l:"Agendar Consulta"},{id:"consultas",ic:"📋",l:"Minhas Consultas"}],
-    psicologo:  [{id:"inicio",ic:"🏠",l:"Início"},{id:"perfil",ic:"👤",l:"Meu Perfil"},{id:"agenda",ic:"📅",l:"Minha Agenda"},{id:"atendimentos",ic:"📋",l:"Atendimentos"},{id:"feedbacks",ic:"💬",l:"Feedbacks Recebidos"}],
-    supervisor: [{id:"inicio",ic:"🏠",l:"Início"},{id:"perfil",ic:"👤",l:"Meu Perfil"},{id:"usuarios",ic:"👥",l:"Gestão de Usuários"},{id:"todos",ic:"📊",l:"Todos Atendimentos"},{id:"gerenciar",ic:"⚙️",l:"Gerenciar Agenda"},{id:"feedback",ic:"✍️",l:"Dar Feedback"},{id:"mensagens",ic:"✉️",l:"Fale Conosco"}],
+    paciente:   [{id:"inicio",ic:<Home size={16}/>,l:"Início"},{id:"perfil",ic:<User size={16}/>,l:"Meu Perfil"},{id:"agendar",ic:<Calendar size={16}/>,l:"Agendar Consulta"},{id:"consultas",ic:<ClipboardList size={16}/>,l:"Minhas Consultas"}],
+    psicologo:  [{id:"inicio",ic:<Home size={16}/>,l:"Início"},{id:"perfil",ic:<User size={16}/>,l:"Meu Perfil"},{id:"agenda",ic:<Calendar size={16}/>,l:"Minha Agenda"},{id:"atendimentos",ic:<ClipboardList size={16}/>,l:"Atendimentos"},{id:"feedbacks",ic:<MessageCircle size={16}/>,l:"Feedbacks Recebidos"}],
+    supervisor: [{id:"inicio",ic:<Home size={16}/>,l:"Início"},{id:"perfil",ic:<User size={16}/>,l:"Meu Perfil"},{id:"usuarios",ic:<Users size={16}/>,l:"Gestão de Usuários"},{id:"todos",ic:<BarChart3 size={16}/>,l:"Todos Atendimentos"},{id:"gerenciar",ic:<Settings size={16}/>,l:"Gerenciar Agenda"},{id:"feedback",ic:<PenLine size={16}/>,l:"Dar Feedback"},{id:"mensagens",ic:<Mail size={16}/>,l:"Fale Conosco"}],
   };
   const LABELS = {paciente:"Paciente",psicologo:"Psicólogo(a)",supervisor:"Supervisor(a)"};
   const BADGES = {paciente:"badge-pac",psicologo:"badge-psi",supervisor:"badge-sup"};
@@ -1534,7 +1546,7 @@ function Dashboard({ user, profile, onLogout, onProfileUpdate, theme, setTheme }
     await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("id", user.id);
     setAvatarUrl(publicUrl + "?t=" + Date.now());
     onProfileUpdate({ ...profile, avatar_url: publicUrl });
-    toast("✅ Foto atualizada!");
+    toast("Foto atualizada!");
   }
 
   return (
@@ -1555,7 +1567,7 @@ function Dashboard({ user, profile, onLogout, onProfileUpdate, theme, setTheme }
             </div>
           </li>
           <li><ThemeToggle theme={theme} setTheme={setTheme}/></li>
-          <li><button className="nav-link" onClick={onLogout}>Sair →</button></li>
+          <li><button className="nav-link" onClick={onLogout}>Sair <ArrowRight size={13}/></button></li>
         </ul>
       </nav>
       <div className="dash">
@@ -1563,7 +1575,7 @@ function Dashboard({ user, profile, onLogout, onProfileUpdate, theme, setTheme }
           <div className="sb-user">
             <div className="sb-avatar-wrap">
               <Avatar className="sb-avatar" name={profile.nome} url={avatarUrl}/>
-              <div className="sb-avatar-edit" onClick={() => fileRef.current?.click()} title="Trocar foto">📷</div>
+              <div className="sb-avatar-edit" onClick={() => fileRef.current?.click()} title="Trocar foto"><Camera size={11}/></div>
               <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleAvatarUpload}/>
             </div>
             <h4>{profile.nome}</h4>
@@ -1581,7 +1593,7 @@ function Dashboard({ user, profile, onLogout, onProfileUpdate, theme, setTheme }
             })}
           </nav>
           <div className="sb-foot">
-            <button className="btn btn-sm btn-danger" style={{width:"100%"}} onClick={onLogout}>🚪 Sair da conta</button>
+            <button className="btn btn-sm btn-danger" style={{width:"100%"}} onClick={onLogout}><LogOut size={14}/> Sair da conta</button>
           </div>
         </aside>
 
@@ -1599,7 +1611,7 @@ function Dashboard({ user, profile, onLogout, onProfileUpdate, theme, setTheme }
               );
             })}
             <button className="bot-nav-item" onClick={onLogout}>
-              <span className="bni">🚪</span>
+              <span className="bni"><LogOut size={16}/></span>
               <span>Sair</span>
             </button>
           </div>
@@ -1639,7 +1651,7 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
     setAvBusy(false);
     if (error) { toast(`Erro ao enviar avaliação: ${error.message}`, "err"); return; }
     setConsultas(p => p.map(c => c.id===avaliarAg.id ? {...c, avaliacao_nota: avNota, avaliacao_texto: avTexto||null} : c));
-    toast("✅ Obrigado pela sua avaliação!");
+    toast("Obrigado pela sua avaliação!");
     setAvaliarAg(null); setAvNota(5); setAvTexto("");
   }
 
@@ -1655,14 +1667,14 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
   async function salvar() {
     const {data,error} = await supabase.from("profiles").update({nome,matricula:mat}).eq("id",uid).select().single();
     if (error) { toast("Erro ao salvar.", "err"); return; }
-    if (data) { onPU(data); toast("✅ Perfil atualizado com sucesso!"); }
+    if (data) { onPU(data); toast("Perfil atualizado com sucesso!"); }
   }
 
   async function cancelarConsulta(id) {
     const { error } = await supabase.from("agendamentos").update({ status: "cancelado" }).eq("id", id);
     if (error) { toast(`Erro ao cancelar: ${error.message}`, "err"); return; }
     setConsultas(p => p.map(a => a.id === id ? { ...a, status: "cancelado" } : a));
-    toast("✅ Consulta cancelada.");
+    toast("Consulta cancelada.");
   }
 
   async function reagendarConsulta(a) {
@@ -1696,7 +1708,7 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
 
   if (aba==="perfil") return (
     <div>
-      <div className="dash-title">👤 Meu Perfil</div>
+      <div className="dash-title"><User size={20}/> Meu Perfil</div>
       <div className="dash-sub">Suas informações pessoais</div>
       <div className="prof-card">
         <div className="prof-av-wrap">
@@ -1705,7 +1717,7 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
         <div className="prof-info"><h3>{profile.nome}</h3><p>{profile.email}{profile.matricula&&` · Matrícula: ${profile.matricula}`}</p><br/><span className="chip">Paciente</span></div>
       </div>
       <div className="panel">
-        <div className="panel-title">✏️ Editar dados</div>
+        <div className="panel-title"><Pencil size={16}/> Editar dados</div>
         <div className="fg"><label>Nome</label><input value={nome} onChange={e=>setNome(e.target.value)}/></div>
         <div className="fg"><label>Matrícula</label><input value={mat} onChange={e=>setMat(e.target.value)} placeholder="20240001"/></div>
         <div className="fg"><label>E-mail</label><EmailEditField uid={uid} currentEmail={profile.email} onUpdated={(em)=>onPU({...profile, email: em})}/></div>
@@ -1726,21 +1738,21 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
     });
     return (
     <div>
-      <div className="dash-title">📋 Minhas Consultas</div>
+      <div className="dash-title"><ClipboardList size={20}/> Minhas Consultas</div>
       <div className="dash-sub">Histórico e próximas sessões</div>
       <ConfirmModal config={confirmCfg} onClose={() => setConfirmCfg(null)} />
       {avaliarAg && (
         <div className="overlay" onClick={() => setAvaliarAg(null)}>
           <div className="modal" style={{maxWidth:420}} onClick={e => e.stopPropagation()}>
-            <button className="modal-x" onClick={() => setAvaliarAg(null)}>✕</button>
-            <div style={{fontSize:38,marginBottom:10}}>⭐</div>
+            <button className="modal-x" onClick={() => setAvaliarAg(null)}><X size={16}/></button>
+            <div style={{marginBottom:10,color:"var(--amber)",display:"flex",justifyContent:"center"}}><Star size={38} fill="currentColor"/></div>
             <h3 style={{fontFamily:"var(--font-head)",fontSize:18,fontWeight:800,color:"var(--ink)",marginBottom:6}}>Avaliar sessão</h3>
             <p style={{fontSize:13.5,color:"var(--ink-2)",marginBottom:12}}>
               Sessão de {fmt(avaliarAg.data)} com <strong>{avaliarAg.psicologo_nome||"—"}</strong>. Sua avaliação ajuda a melhorar nosso atendimento.
             </p>
             <div style={{display:"flex",gap:6,justifyContent:"center",marginBottom:14}}>
               {[1,2,3,4,5].map(n=>(
-                <button key={n} onClick={()=>setAvNota(n)} style={{fontSize:30,background:"none",border:"none",cursor:"pointer",opacity:n<=avNota?1:.25,transition:"opacity .15s"}}>⭐</button>
+                <button key={n} onClick={()=>setAvNota(n)} style={{color:"var(--amber)",display:"inline-flex",background:"none",border:"none",cursor:"pointer",opacity:n<=avNota?1:.25,transition:"opacity .15s"}}><Star size={28} fill="currentColor"/></button>
               ))}
             </div>
             <div className="fg">
@@ -1757,16 +1769,16 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
       {loading ? <Loading kind="table" rows={4} /> :
        consultas.length===0 ? (
          <EmptyState
-           icon="🗓️"
+           icon={<CalendarDays size={34}/>}
            title="Nenhuma consulta agendada ainda"
            subtitle="Que tal marcar sua primeira sessão? É rápido e totalmente gratuito para estudantes da FUMEC."
-           ctaLabel="📅 Agendar consulta"
+           ctaLabel={<><Calendar size={14}/> Agendar consulta</>}
            onCta={() => setAba("agendar")}
          />
        ) : <>
         <SearchBox value={busca} onChange={setBusca} placeholder="Buscar por psicólogo, data ou status..." />
         {filtradas.length===0 ? (
-          <EmptyState icon="🔍" title="Nenhum resultado" subtitle="Tente buscar por outro termo." />
+          <EmptyState icon={<Search size={34}/>} title="Nenhum resultado" subtitle="Tente buscar por outro termo." />
         ) : (
         <div className="panel">
           <div className="tw"><table>
@@ -1779,14 +1791,14 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                 <td>
                   {(a.status==="pendente"||a.status==="confirmado") ? (
                     <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-                      <button className="btn btn-sm btn-outline" onClick={() => pedirReagendamento(a)}>🔄 Reagendar</button>
+                      <button className="btn btn-sm btn-outline" onClick={() => pedirReagendamento(a)}><RefreshCw size={14} style={{verticalAlign:"-2px"}}/> Reagendar</button>
                       <button className="btn btn-sm btn-danger" onClick={() => pedirCancelamento(a)}>Cancelar</button>
                     </div>
                   ) : a.status==="concluido" ? (
                     a.avaliacao_nota ? (
-                      <span style={{fontSize:13}}>{"⭐".repeat(a.avaliacao_nota)}</span>
+                      <span style={{display:"inline-flex",gap:2,color:"var(--amber)"}}>{Array.from({length:a.avaliacao_nota||0}).map((_,i)=><Star key={i} size={13} fill="currentColor"/>)}</span>
                     ) : (
-                      <button className="btn btn-sm btn-outline" onClick={() => { setAvaliarAg(a); setAvNota(5); setAvTexto(""); }}>⭐ Avaliar sessão</button>
+                      <button className="btn btn-sm btn-outline" onClick={() => { setAvaliarAg(a); setAvNota(5); setAvTexto(""); }}><Star size={14} style={{verticalAlign:"-2px"}}/> Avaliar sessão</button>
                     )
                   ) : <span style={{color:"var(--ink-3)",fontSize:12.5}}>—</span>}
                 </td>
@@ -1808,7 +1820,7 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
 
   return (
     <div>
-      <div className="dash-title">Olá, {profile.nome.split(" ")[0]}! 👋</div>
+      <div className="dash-title">Olá, {profile.nome.split(" ")[0]}!</div>
       <div className="dash-sub">Bem-vindo(a) à sua área de paciente</div>
       {loading ? <>
         <Loading kind="kpi" rows={3} />
@@ -1820,13 +1832,13 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
           <div className="kpi"><div className="kpi-num">{conc}</div><div className="kpi-label">Sessões realizadas</div></div>
         </div>
         <div className="panel">
-          <div className="panel-title">📅 Próximas consultas</div>
+          <div className="panel-title"><Calendar size={16}/> Próximas consultas</div>
           {prox.length===0 ? (
             <EmptyState
-              icon="🗓️"
+              icon={<CalendarDays size={34}/>}
               title="Nenhuma consulta agendada"
               subtitle="Marque sua primeira sessão com um de nossos psicólogos."
-              ctaLabel="📅 Agendar consulta"
+              ctaLabel={<><Calendar size={14}/> Agendar consulta</>}
               onCta={() => setAba("agendar")}
             />
           ) :
@@ -1839,10 +1851,10 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
             </table></div>
           }
           {prox.length>5 && (
-            <button className="load-more-btn" onClick={() => setAba("consultas")}>Ver todas as {prox.length} consultas →</button>
+            <button className="load-more-btn" onClick={() => setAba("consultas")}>Ver todas as {prox.length} consultas <ArrowRight size={13} style={{verticalAlign:"-2px"}}/></button>
           )}
         </div>
-        <div className="al al-warn">⚠️ Em caso de crise, ligue para o <strong>CVV: 188</strong> (24h, gratuito)</div>
+        <div className="al al-warn" style={{display:"flex",gap:8,alignItems:"flex-start"}}><AlertTriangle size={16} style={{flexShrink:0,marginTop:2}}/> Em caso de crise, ligue para o <strong>CVV: 188</strong> (24h, gratuito)</div>
       </>}
     </div>
   );
@@ -1899,17 +1911,17 @@ function TelaAgendar({ uid, profile, psicos, onAgendado }) {
       psicologo_nome:pnome, data:ds, hora, status:"pendente", sessao_numero:(count||0)+1,
     }).select().single();
     setSalv(false);
-    if (!error&&data) { setOk(data); onAgendado(data); toast("✅ Consulta agendada com sucesso!"); }
+    if (!error&&data) { setOk(data); onAgendado(data); toast("Consulta agendada com sucesso!"); }
     else toast("Erro ao agendar. Tente novamente.", "err");
   }
 
   if (ok) return (
     <div>
-      <div className="dash-title">📅 Agendar Consulta</div>
+      <div className="dash-title"><Calendar size={20}/> Agendar Consulta</div>
       <div className="al al-ok" style={{fontSize:15,padding:"1.5rem",lineHeight:2}}>
-        ✅ <strong>Consulta agendada com sucesso!</strong><br/>
-        📅 Data: <strong>{fmt(ok.data)}</strong> · 🕐 <strong>{fmtH(ok.hora)}</strong><br/>
-        🧑‍⚕️ Psicólogo(a): <strong>{ok.psicologo_nome}</strong><br/>
+        <CheckCircle2 size={14} style={{verticalAlign:"-2px"}}/> <strong>Consulta agendada com sucesso!</strong><br/>
+        <Calendar size={14} style={{verticalAlign:"-2px"}}/> Data: <strong>{fmt(ok.data)}</strong> · <Clock size={14} style={{verticalAlign:"-2px"}}/> <strong>{fmtH(ok.hora)}</strong><br/>
+        <Stethoscope size={14} style={{verticalAlign:"-2px"}}/> Psicólogo(a): <strong>{ok.psicologo_nome}</strong><br/>
         ⏳ Aguardando confirmação do supervisor.
       </div>
       <button className="btn btn-teal btn-sm" onClick={()=>{setOk(null);setDia(null);setHora(null);}}>Agendar outro horário</button>
@@ -1918,17 +1930,17 @@ function TelaAgendar({ uid, profile, psicos, onAgendado }) {
 
   return (
     <div>
-      <div className="dash-title">📅 Agendar Consulta</div>
+      <div className="dash-title"><Calendar size={20}/> Agendar Consulta</div>
       <div className="dash-sub">Escolha o profissional, o dia e o horário disponível</div>
       {psicos.length===0
         ? <EmptyState
-            icon="🧑‍⚕️"
+            icon={<Stethoscope size={34}/>}
             title="Nenhum psicólogo disponível no momento"
             subtitle="Nossa equipe está organizando os profissionais ativos. Tente novamente em breve ou acompanhe pelo Fale Conosco."
           />
         : <>
           <div className="panel">
-            <div className="panel-title">🧑‍⚕️ Escolha o psicólogo(a)</div>
+            <div className="panel-title"><Stethoscope size={16}/> Escolha o psicólogo(a)</div>
             <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
               {psicos.map(p=>(
                 <button key={p.id} onClick={()=>{setPsico(p.id);setDia(null);setHora(null);}} className="btn btn-sm" style={{
@@ -1967,7 +1979,7 @@ function TelaAgendar({ uid, profile, psicos, onAgendado }) {
                   </div>
                   {hora && (
                     <div style={{marginTop:"1rem"}}>
-                      <div className="al al-ok" style={{marginBottom:"1rem"}}>✅ <strong>{dia}/{mes+1} às {hora}</strong></div>
+                      <div className="al al-ok" style={{marginBottom:"1rem",display:"flex",gap:8,alignItems:"center"}}><CheckCircle2 size={16}/> <strong>{dia}/{mes+1} às {hora}</strong></div>
                       <button className="btn btn-teal" style={{width:"100%"}} onClick={confirmar} disabled={salvando}>
                         {salvando?<><Spin/> Salvando...</>:"Confirmar agendamento"}
                       </button>
@@ -2049,17 +2061,17 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
     const {error} = await supabase.from("disponibilidade").insert(rows);
     setSavingAgenda(false);
     if (error) {
-      if (error.code === "42P01") { toast("⚠️ Tabela disponibilidade não criada. Execute a migration SQL.", "err"); }
+      if (error.code === "42P01") { toast("Tabela disponibilidade não criada. Execute a migration SQL.", "err"); }
       else { toast("Erro ao salvar disponibilidade.", "err"); }
       return;
     }
-    toast("✅ Disponibilidade salva com sucesso!");
+    toast("Disponibilidade salva com sucesso!");
   }
 
   async function salvarPerfil() {
     const {data,error} = await supabase.from("profiles").update({nome,crp}).eq("id",uid).select().single();
     if (error) { toast("Erro ao salvar.", "err"); return; }
-    if (data) { onPU(data); toast("✅ Perfil atualizado!"); }
+    if (data) { onPU(data); toast("Perfil atualizado!"); }
   }
 
   // Abre modal para concluir atendimento com observações
@@ -2077,7 +2089,7 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
     setObsBusy(false);
     if (error) { toast(`Erro ao concluir: ${error.message}`, "err"); return; }
     setAtend(p => p.map(a => a.id === concluirAg.id ? { ...a, status: "concluido", observacoes: obsTexto || null } : a));
-    toast("✅ Atendimento concluído!");
+    toast("Atendimento concluído!");
     setConcluirAg(null);
   }
 
@@ -2085,7 +2097,7 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
     const { error } = await supabase.from("agendamentos").update({ status: "cancelado" }).eq("id", id);
     if (error) { toast(`Erro ao cancelar: ${error.message}`, "err"); return; }
     setAtend(p => p.map(a => a.id === id ? { ...a, status: "cancelado" } : a));
-    toast("✅ Atendimento cancelado.");
+    toast("Atendimento cancelado.");
   }
 
   function pedirCancelamentoAtendimento(a) {
@@ -2100,7 +2112,7 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
 
   if (aba==="perfil") return (
     <div>
-      <div className="dash-title">👤 Meu Perfil</div>
+      <div className="dash-title"><User size={20}/> Meu Perfil</div>
       <div className="prof-card">
         <div className="prof-av-wrap">
           <Avatar className="prof-av" name={profile.nome} url={avatarUrl}/>
@@ -2108,7 +2120,7 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
         <div className="prof-info"><h3>{profile.nome}</h3><p>{profile.email}{profile.crp&&` · CRP: ${profile.crp}`}</p><br/><span className="chip">Psicólogo(a) Estagiário(a)</span></div>
       </div>
       <div className="panel">
-        <div className="panel-title">✏️ Editar dados</div>
+        <div className="panel-title"><Pencil size={16}/> Editar dados</div>
         <div className="fg"><label>Nome</label><input value={nome} onChange={e=>setNome(e.target.value)}/></div>
         <div className="fg"><label>CRP</label><input value={crp} onChange={e=>setCrp(e.target.value)} placeholder="04/12345"/></div>
         <div className="fg"><label>E-mail</label><EmailEditField uid={uid} currentEmail={profile.email} onUpdated={(em)=>onPU({...profile, email: em})}/></div>
@@ -2119,10 +2131,10 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
 
   if (aba==="agenda") return (
     <div>
-      <div className="dash-title">📅 Minha Agenda</div>
+      <div className="dash-title"><Calendar size={20}/> Minha Agenda</div>
       <div className="dash-sub">Configure sua disponibilidade semanal</div>
       <div className="panel">
-        <div className="panel-title">🕐 Horários disponíveis</div>
+        <div className="panel-title"><Clock size={16}/> Horários disponíveis</div>
         <div className="al al-info" style={{marginBottom:"1.25rem"}}>Toque nos horários em que você pode atender. Eles ficarão visíveis para os pacientes no agendamento.</div>
         <div className="avail-grid">
           <div className="avail-row avail-head">
@@ -2150,7 +2162,7 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
           ))}
         </div>
         <button className="btn btn-teal" style={{marginTop:"1.5rem"}} onClick={salvarAgenda} disabled={savingAgenda}>
-          {savingAgenda ? <><Spin/> Salvando...</> : "💾 Salvar disponibilidade"}
+          {savingAgenda ? <><Spin/> Salvando...</> : <><Save size={14} style={{verticalAlign:"-2px"}}/> Salvar disponibilidade</>}
         </button>
       </div>
     </div>
@@ -2166,15 +2178,15 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
     });
     return (
     <div>
-      <div className="dash-title">📋 Meus Atendimentos</div>
+      <div className="dash-title"><ClipboardList size={20}/> Meus Atendimentos</div>
       <ConfirmModal config={confirmCfg} onClose={() => setConfirmCfg(null)} />
 
       {/* Modal: concluir com observações */}
       {concluirAg && (
         <div className="overlay" onClick={() => setConcluirAg(null)}>
           <div className="modal" style={{maxWidth:480}} onClick={e => e.stopPropagation()}>
-            <button className="modal-x" onClick={() => setConcluirAg(null)}>✕</button>
-            <div style={{fontSize:38,marginBottom:10}}>🟣</div>
+            <button className="modal-x" onClick={() => setConcluirAg(null)}><X size={16}/></button>
+            <div style={{marginBottom:10,color:"var(--purple)",display:"flex",justifyContent:"center"}}><Circle size={38} fill="currentColor"/></div>
             <h3 style={{fontFamily:"var(--font-head)",fontSize:18,fontWeight:800,color:"var(--ink)",marginBottom:6}}>Concluir atendimento</h3>
             <p style={{fontSize:13.5,color:"var(--ink-2)",marginBottom:14}}>
               Sessão de {fmt(concluirAg.data)} às {fmtH(concluirAg.hora)} com <strong>{concluirAg.paciente_nome || "—"}</strong>.
@@ -2188,13 +2200,13 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                 style={{height:120}}
               />
               <div className="al al-info" style={{marginTop:8,fontSize:12.5}}>
-                💬 Essas observações ficam visíveis para você e para o supervisor.
+                <MessageCircle size={13} style={{verticalAlign:"-2px"}}/> Essas observações ficam visíveis para você e para o supervisor.
               </div>
             </div>
             <div style={{display:"flex",gap:10,marginTop:6}}>
               <button className="btn btn-outline" style={{flex:1}} onClick={() => setConcluirAg(null)} disabled={obsBusy}>Cancelar</button>
               <button className="btn btn-teal" style={{flex:1}} onClick={confirmarConclusao} disabled={obsBusy}>
-                {obsBusy ? <Spin/> : "✅ Concluir atendimento"}
+                {obsBusy ? <Spin/> : <><CheckCircle2 size={14} style={{verticalAlign:"-2px"}}/> Concluir atendimento</>}
               </button>
             </div>
           </div>
@@ -2206,14 +2218,14 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
           <div className="panel-title">Lista de atendimentos</div>
           {atend.length===0 ? (
             <EmptyState
-              icon="📋"
+              icon={<ClipboardList size={34}/>}
               title="Nenhum atendimento ainda"
               subtitle="Quando pacientes agendarem sessões com você, elas aparecerão aqui."
             />
           ) : <>
             <SearchBox value={busca} onChange={setBusca} placeholder="Buscar por paciente, data ou status..." />
             {filtrados.length===0 ? (
-              <EmptyState icon="🔍" title="Nenhum resultado" subtitle="Tente buscar por outro termo." />
+              <EmptyState icon={<Search size={34}/>} title="Nenhum resultado" subtitle="Tente buscar por outro termo." />
             ) :
             <div className="tw"><table>
               <thead><tr><th>Data</th><th>Horário</th><th>Paciente</th><th>Sessão</th><th>Status</th><th>Observações</th><th>Ações</th></tr></thead>
@@ -2237,11 +2249,11 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                   <td style={{maxWidth:220}}>{a.observacoes ? <span style={{fontSize:12.5,color:"var(--ink-2)"}}>{a.observacoes}</span> : <span style={{color:"var(--ink-3)"}}>—</span>}</td>
                   <td style={{display:"flex",gap:6,flexWrap:"wrap"}}>
                     {a.status==="confirmado" && <>
-                      <button className="btn btn-sm btn-success" onClick={() => abrirConcluir(a)}>🟣 Concluir</button>
+                      <button className="btn btn-sm btn-success" onClick={() => abrirConcluir(a)}><Circle size={13} fill="currentColor" style={{verticalAlign:"-2px"}}/> Concluir</button>
                       <button className="btn btn-sm btn-danger" onClick={() => pedirCancelamentoAtendimento(a)}>Cancelar</button>
                     </>}
                     {a.status==="concluido" && (
-                      <button className="btn btn-sm btn-outline" onClick={() => abrirConcluir(a)}>✏️ Editar obs.</button>
+                      <button className="btn btn-sm btn-outline" onClick={() => abrirConcluir(a)}><Pencil size={14} style={{verticalAlign:"-2px"}}/> Editar obs.</button>
                     )}
                     {(a.status!=="confirmado" && a.status!=="concluido") && <span style={{color:"var(--ink-3)",fontSize:12.5}}>—</span>}
                   </td>
@@ -2274,12 +2286,12 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
 
   if (aba==="feedbacks") return (
     <div>
-      <div className="dash-title">💬 Feedbacks Recebidos</div>
+      <div className="dash-title"><MessageCircle size={20}/> Feedbacks Recebidos</div>
       <div className="dash-sub">Avaliações do supervisor sobre seus atendimentos</div>
       {loading ? <Loading kind="cards" rows={3} /> :
        fbs.length===0 ? (
          <EmptyState
-           icon="💬"
+           icon={<MessageCircle size={34}/>}
            title="Nenhum feedback recebido ainda"
            subtitle="Os feedbacks enviados pelo supervisor sobre suas sessões aparecerão aqui."
          />
@@ -2287,7 +2299,7 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
         fbs.map(fb=>(
           <div className="fb-card" key={fb.id}>
             <div className="fb-hdr"><h4>Sessão com {fb.paciente_nome||"—"}</h4><span>{fmt(fb.created_at?.slice(0,10))} · {fb.supervisor_nome}</span></div>
-            <div className="stars">{"⭐".repeat(fb.nota||0)}</div>
+            <div className="stars" style={{display:"inline-flex",gap:2,color:"var(--amber)"}}>{Array.from({length:fb.nota||0}).map((_,i)=><Star key={i} size={14} fill="currentColor"/>)}</div>
             <p className="fb-text" style={{marginTop:8}}>{fb.texto}</p>
           </div>
         ))
@@ -2297,7 +2309,7 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
 
   return (
     <div>
-      <div className="dash-title">Olá, {profile.nome.split(" ")[0]}! 🧑‍⚕️</div>
+      <div className="dash-title">Olá, {profile.nome.split(" ")[0]}!</div>
       <div className="dash-sub">Sua área de psicólogo(a) estagiário(a)</div>
       {loading ? <>
         <Loading kind="kpi" rows={4} />
@@ -2310,15 +2322,15 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
           <div className="kpi"><div className="kpi-num">{fbs.length}</div><div className="kpi-label">Feedbacks</div></div>
         </div>
         <div className="panel">
-          <div className="panel-title">📅 Próximos atendimentos</div>
+          <div className="panel-title"><Calendar size={16}/> Próximos atendimentos</div>
           {(() => {
             const prox = atend.filter(a=>a.status!=="concluido"&&a.status!=="cancelado");
             if (prox.length===0) return (
               <EmptyState
-                icon="📅"
+                icon={<Calendar size={34}/>}
                 title="Nenhum atendimento agendado"
                 subtitle="Configure sua disponibilidade na agenda para que pacientes possam marcar sessões com você."
-                ctaLabel="🕐 Configurar agenda"
+                ctaLabel={<><Clock size={14}/> Configurar agenda</>}
                 onCta={() => setAba("agenda")}
               />
             );
@@ -2331,7 +2343,7 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                 ))}</tbody>
               </table></div>
               {prox.length>5 && (
-                <button className="load-more-btn" onClick={() => setAba("atendimentos")}>Ver todos os {prox.length} atendimentos →</button>
+                <button className="load-more-btn" onClick={() => setAba("atendimentos")}>Ver todos os {prox.length} atendimentos <ArrowRight size={13} style={{verticalAlign:"-2px"}}/></button>
               )}
             </>;
           })()}
@@ -2397,7 +2409,7 @@ function SupervisorCharts({ todos, psicos }) {
       </div>
       <div className="charts-grid">
         <div className="panel">
-          <div className="panel-title">📈 Atendimentos por mês</div>
+          <div className="panel-title"><TrendingUp size={16}/> Atendimentos por mês</div>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={dataMes} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
@@ -2409,14 +2421,14 @@ function SupervisorCharts({ todos, psicos }) {
           </ResponsiveContainer>
         </div>
         <div className="panel">
-          <div className="panel-title">🍩 Distribuição por status</div>
+          <div className="panel-title"><PieChart size={16}/> Distribuição por status</div>
           <ResponsiveContainer width="100%" height={220}>
-            <PieChart>
+            <RPieChart>
               <Pie data={dataStatus} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3}>
                 {dataStatus.map((e, i) => <Cell key={i} fill={e.color} />)}
               </Pie>
               <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid var(--border)", fontSize: 13, background: "var(--bg-card)", color: "var(--ink)" }} />
-            </PieChart>
+            </RPieChart>
           </ResponsiveContainer>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center", marginTop: 4 }}>
             {dataStatus.map((e, i) => (
@@ -2429,7 +2441,7 @@ function SupervisorCharts({ todos, psicos }) {
       </div>
       {dataPsico.length > 0 && (
         <div className="panel">
-          <div className="panel-title">👥 Atendimentos por psicólogo(a)</div>
+          <div className="panel-title"><Users size={16}/> Atendimentos por psicólogo(a)</div>
           <ResponsiveContainer width="100%" height={Math.max(180, dataPsico.length * 38)}>
             <BarChart data={dataPsico} layout="vertical" margin={{ top: 0, right: 20, left: 10, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
@@ -2498,8 +2510,8 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
     const { error } = await supabase.from("agendamentos").update({status}).eq("id",id);
     if (error) { toast("Erro ao atualizar agendamento.", "err"); return; }
     setTodos(p=>p.map(a=>a.id===id?{...a,status}:a));
-    const msgs = { confirmado:"✅ Confirmado!", concluido:"🟣 Concluído!", cancelado:"❌ Cancelado." };
-    toast(msgs[status] || "✅ Atualizado!");
+    const msgs = { confirmado:"Confirmado!", concluido:"Concluído!", cancelado:"Cancelado." };
+    toast(msgs[status] || "Atualizado!");
   }
 
   async function enviarFb() {
@@ -2512,7 +2524,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
     });
     setFbB(false);
     if (error) { toast(`Erro ao enviar feedback: ${error.message}`, "err"); return; }
-    toast("✅ Feedback enviado com sucesso!"); setFbT(""); setFbPac(""); setFbP(""); setFbN(5);
+    toast("Feedback enviado com sucesso!"); setFbT(""); setFbPac(""); setFbP(""); setFbN(5);
     const {data:fb} = await supabase.from("feedbacks").select("*").order("created_at",{ascending:false});
     setFbs(fb||[]);
   }
@@ -2520,7 +2532,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
   async function salvarPerfil() {
     const {data,error} = await supabase.from("profiles").update({nome}).eq("id",uid).select().single();
     if (error) { toast("Erro ao salvar.", "err"); return; }
-    if (data) { onPU(data); toast("✅ Perfil atualizado!"); }
+    if (data) { onPU(data); toast("Perfil atualizado!"); }
   }
 
   async function setStatusUsuario(userId, novoStatus) {
@@ -2528,11 +2540,11 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
     if (error) {
       if (error.code === "42703") {
         // Coluna status não existe no banco — roda a migration primeiro
-        toast("⚠️ Execute a migration SQL para adicionar a coluna status. Veja MIGRATIONS_V1.sql", "err");
+        toast("Execute a migration SQL para adicionar a coluna status. Veja MIGRATIONS_V1.sql", "err");
         return;
       }
       if (error.code === "42501" || error.message?.includes("violates row-level security")) {
-        toast("⚠️ Permissão negada. Execute o SQL de policy no Supabase (ver MIGRATIONS_V1.sql).", "err");
+        toast("Permissão negada. Execute o SQL de policy no Supabase (ver MIGRATIONS_V1.sql).", "err");
         return;
       }
       toast(`Erro: ${error.message}`, "err");
@@ -2542,7 +2554,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
     setUsuarios(p => p.map(u => u.id === userId ? { ...u, status: novoStatus } : u));
     setPsicos(p => p.map(u => u.id === userId ? { ...u, status: novoStatus } : u));
     const acao = novoStatus === "ativo" ? "aprovado/ativado" : novoStatus === "inativo" ? "desativado/rejeitado" : novoStatus;
-    toast(`✅ Usuário ${acao} com sucesso!`);
+    toast(`Usuário ${acao} com sucesso!`);
   }
 
   async function marcarMsgLida(msg) {
@@ -2584,7 +2596,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
 
   if (aba==="perfil") return (
     <div>
-      <div className="dash-title">👩‍🏫 Meu Perfil</div>
+      <div className="dash-title"><GraduationCap size={20}/> Meu Perfil</div>
       <div className="prof-card">
         <div className="prof-av-wrap">
           <Avatar className="prof-av" name={profile.nome} url={avatarUrl}/>
@@ -2592,7 +2604,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
         <div className="prof-info"><h3>{profile.nome}</h3><p>{profile.email}</p><br/><span className="chip">Supervisor / Administrador</span></div>
       </div>
       <div className="panel">
-        <div className="panel-title">✏️ Editar dados</div>
+        <div className="panel-title"><Pencil size={16}/> Editar dados</div>
         <div className="fg"><label>Nome</label><input value={nome} onChange={e=>setNome(e.target.value)}/></div>
         <div className="fg"><label>E-mail</label><EmailEditField uid={uid} currentEmail={profile.email} onUpdated={(em)=>onPU({...profile, email: em})}/></div>
         <button className="btn btn-teal btn-sm" onClick={salvarPerfil}>Salvar</button>
@@ -2608,7 +2620,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
     const pacientesFiltrados = usuarios.filter(u=>u.tipo==="paciente"&&matches(u));
     return (
     <div>
-      <div className="dash-title">👥 Gestão de Usuários</div>
+      <div className="dash-title"><Users size={20}/> Gestão de Usuários</div>
       <div className="dash-sub">Gerencie contas, ative psicólogos e aprove supervisores</div>
       <ConfirmModal config={confirmCfg} onClose={() => setConfirmCfg(null)} />
       {loading ? <Loading kind="cards" rows={4} /> : <>
@@ -2616,7 +2628,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
         {/* Supervisores pendentes */}
         {usuarios.filter(u=>u.tipo==="supervisor"&&u.status==="pendente_aprovacao").length>0 && (
           <div className="panel" style={{borderColor:"var(--amber)",borderWidth:2}}>
-            <div className="panel-title" style={{color:"var(--amber)"}}>⏳ Supervisores aguardando aprovação ({usuarios.filter(u=>u.tipo==="supervisor"&&u.status==="pendente_aprovacao").length})</div>
+            <div className="panel-title" style={{color:"var(--amber)"}}><Hourglass size={14} style={{verticalAlign:"-2px"}}/> Supervisores aguardando aprovação ({usuarios.filter(u=>u.tipo==="supervisor"&&u.status==="pendente_aprovacao").length})</div>
             {usuarios.filter(u=>u.tipo==="supervisor"&&u.status==="pendente_aprovacao").map(u=>(
               <div className="user-card" key={u.id}>
                 <div className="user-card-left">
@@ -2625,8 +2637,8 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                 </div>
                 <div className="user-card-actions">
                   <span className="st st-aguardando">Aguardando</span>
-                  <button className="btn btn-sm btn-success" onClick={()=>setStatusUsuario(u.id,"ativo")}>✅ Aprovar</button>
-                  <button className="btn btn-sm btn-danger"  onClick={()=>pedirRejeicao(u, "supervisor")}>❌ Rejeitar</button>
+                  <button className="btn btn-sm btn-success" onClick={()=>setStatusUsuario(u.id,"ativo")}><CheckCircle2 size={14} style={{verticalAlign:"-2px"}}/> Aprovar</button>
+                  <button className="btn btn-sm btn-danger"  onClick={()=>pedirRejeicao(u, "supervisor")}><XCircle size={14} style={{verticalAlign:"-2px"}}/> Rejeitar</button>
                 </div>
               </div>
             ))}
@@ -2636,7 +2648,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
         {/* Psicólogos pendentes */}
         {usuarios.filter(u=>u.tipo==="psicologo"&&u.status==="pendente_aprovacao").length>0 && (
           <div className="panel" style={{borderColor:"var(--teal)",borderWidth:2}}>
-            <div className="panel-title" style={{color:"var(--teal)"}}>⏳ Psicólogos aguardando ativação ({usuarios.filter(u=>u.tipo==="psicologo"&&u.status==="pendente_aprovacao").length})</div>
+            <div className="panel-title" style={{color:"var(--teal)"}}><Hourglass size={14} style={{verticalAlign:"-2px"}}/> Psicólogos aguardando ativação ({usuarios.filter(u=>u.tipo==="psicologo"&&u.status==="pendente_aprovacao").length})</div>
             {usuarios.filter(u=>u.tipo==="psicologo"&&u.status==="pendente_aprovacao").map(u=>(
               <div className="user-card" key={u.id}>
                 <div className="user-card-left">
@@ -2648,8 +2660,8 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                 </div>
                 <div className="user-card-actions">
                   <span className="st st-aguardando">Aguardando ativação</span>
-                  <button className="btn btn-sm btn-success" onClick={()=>setStatusUsuario(u.id,"ativo")}>✅ Ativar para atender</button>
-                  <button className="btn btn-sm btn-danger"  onClick={()=>pedirRejeicao(u, "psicólogo")}>❌ Rejeitar</button>
+                  <button className="btn btn-sm btn-success" onClick={()=>setStatusUsuario(u.id,"ativo")}><CheckCircle2 size={14} style={{verticalAlign:"-2px"}}/> Ativar para atender</button>
+                  <button className="btn btn-sm btn-danger"  onClick={()=>pedirRejeicao(u, "psicólogo")}><XCircle size={14} style={{verticalAlign:"-2px"}}/> Rejeitar</button>
                 </div>
               </div>
             ))}
@@ -2660,9 +2672,9 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
 
         {/* Psicólogos ativos/inativos */}
         <div className="panel">
-          <div className="panel-title">🧑‍⚕️ Psicólogos</div>
+          <div className="panel-title"><Stethoscope size={16}/> Psicólogos</div>
           {psicosAtivosInativos.length===0
-            ? <EmptyState icon="🧑‍⚕️" title={buscaUsuarios ? "Nenhum resultado" : "Nenhum psicólogo cadastrado"} subtitle={buscaUsuarios ? "Tente buscar por outro termo." : "Quando psicólogos se cadastrarem na plataforma, eles aparecerão aqui para ativação."} />
+            ? <EmptyState icon={<Stethoscope size={34}/>} title={buscaUsuarios ? "Nenhum resultado" : "Nenhum psicólogo cadastrado"} subtitle={buscaUsuarios ? "Tente buscar por outro termo." : "Quando psicólogos se cadastrarem na plataforma, eles aparecerão aqui para ativação."} />
             : psicosAtivosInativos.map(u=>(
               <div className="user-card" key={u.id}>
                 <div className="user-card-left">
@@ -2675,8 +2687,8 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                 <div className="user-card-actions">
                   <span className={`st st-${u.status||"ativo"}`}>{u.status||"ativo"}</span>
                   {(u.status||"ativo")!=="ativo"
-                    ? <button className="btn btn-sm btn-success" onClick={()=>setStatusUsuario(u.id,"ativo")}>✅ Ativar</button>
-                    : <button className="btn btn-sm btn-danger"  onClick={()=>pedirDesativacao(u)}>⛔ Desativar</button>
+                    ? <button className="btn btn-sm btn-success" onClick={()=>setStatusUsuario(u.id,"ativo")}><CheckCircle2 size={14} style={{verticalAlign:"-2px"}}/> Ativar</button>
+                    : <button className="btn btn-sm btn-danger"  onClick={()=>pedirDesativacao(u)}><Ban size={14} style={{verticalAlign:"-2px"}}/> Desativar</button>
                   }
                 </div>
               </div>
@@ -2686,9 +2698,9 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
 
         {/* Pacientes */}
         <div className="panel">
-          <div className="panel-title">🙋 Pacientes cadastrados</div>
+          <div className="panel-title"><Users size={16}/> Pacientes cadastrados</div>
           {pacientesFiltrados.length===0
-            ? <EmptyState icon="🙋" title={buscaUsuarios ? "Nenhum resultado" : "Nenhum paciente cadastrado"} subtitle={buscaUsuarios ? "Tente buscar por outro termo." : "Estudantes que criarem conta na plataforma aparecerão aqui."} />
+            ? <EmptyState icon={<Users size={34}/>} title={buscaUsuarios ? "Nenhum resultado" : "Nenhum paciente cadastrado"} subtitle={buscaUsuarios ? "Tente buscar por outro termo." : "Estudantes que criarem conta na plataforma aparecerão aqui."} />
             : <div className="tw"><table>
                 <thead><tr><th>Nome</th><th>E-mail</th><th>Matrícula</th><th>Cadastro</th></tr></thead>
                 <tbody>{pacientesFiltrados.map(u=>(
@@ -2704,21 +2716,21 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
 
   if (aba==="todos") return (
     <div>
-      <div className="dash-title">📊 Todos os Atendimentos</div>
+      <div className="dash-title"><BarChart3 size={20}/> Todos os Atendimentos</div>
       <div className="dash-sub">Visão geral de toda a clínica</div>
       {loading ? <>
         <Loading kind="kpi" rows={4} />
         <Loading kind="table" rows={5} />
       </> : <>
         <div className="kpi-row">
-          {[["confirmado","✅ Confirmados"],["pendente","⏳ Pendentes"],["cancelado","❌ Cancelados"],["concluido","🟣 Concluídos"]].map(([st,l])=>(
+          {[["confirmado",<><CheckCircle2 size={14}/> Confirmados</>],["pendente",<><Hourglass size={14}/> Pendentes</>],["cancelado",<><XCircle size={14}/> Cancelados</>],["concluido",<><Circle size={14} fill="currentColor"/> Concluídos</>]].map(([st,l])=>(
             <div className="kpi" key={st}><div className="kpi-num">{todos.filter(a=>a.status===st).length}</div><div className="kpi-label">{l}</div></div>
           ))}
         </div>
         <SupervisorCharts todos={todos} psicos={psicos} />
         <div className="panel">
           <div className="panel-title" style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:8}}>
-            <span>📋 Todos os agendamentos</span>
+            <span style={{display:"inline-flex",alignItems:"center",gap:6}}><ClipboardList size={16}/> Todos os agendamentos</span>
             {todos.length>0 && (
               <button className="btn btn-sm btn-outline" onClick={() => exportarCSV(
                 `atendimentos-fumec-${new Date().toISOString().slice(0,10)}.csv`,
@@ -2732,11 +2744,11 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                   {label:"Observações", value:"observacoes"},
                 ],
                 todos
-              )}>⬇️ Exportar CSV</button>
+              )}><Download size={14} style={{verticalAlign:"-2px"}}/> Exportar CSV</button>
             )}
           </div>
           {todos.length===0 ? (
-            <EmptyState icon="📋" title="Nenhum agendamento ainda" subtitle="Quando pacientes marcarem consultas, todos os agendamentos da clínica aparecerão aqui." />
+            <EmptyState icon={<ClipboardList size={34}/>} title="Nenhum agendamento ainda" subtitle="Quando pacientes marcarem consultas, todos os agendamentos da clínica aparecerão aqui." />
           ) : <>
             <SearchBox value={buscaAtend} onChange={setBuscaAtend} placeholder="Buscar por paciente, psicólogo ou data..." />
             <div className="filter-row">
@@ -2753,7 +2765,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                   || (a.psicologo_nome||"").toLowerCase().includes(term)
                   || fmt(a.data).includes(term);
               });
-              if (filtrados.length===0) return <EmptyState icon="🔍" title="Nenhum resultado" subtitle="Tente buscar por outro termo ou mudar o filtro." />;
+              if (filtrados.length===0) return <EmptyState icon={<Search size={34}/>} title="Nenhum resultado" subtitle="Tente buscar por outro termo ou mudar o filtro." />;
               return (
                 <div className="tw"><table>
                   <thead><tr><th>Data</th><th>Hora</th><th>Paciente</th><th>Psicólogo</th><th>Status</th><th>Observações</th></tr></thead>
@@ -2782,18 +2794,18 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
     );
     return (
     <div>
-      <div className="dash-title">⚙️ Gerenciar Agenda</div>
+      <div className="dash-title"><Settings size={20}/> Gerenciar Agenda</div>
       <div className="dash-sub">Confirme, conclua ou cancele agendamentos</div>
       <ConfirmModal config={confirmCfg} onClose={() => setConfirmCfg(null)} />
       {loading ? <Loading kind="table" rows={5} /> :
         <div className="panel">
-          <div className="panel-title">🗂️ Agendamentos ativos</div>
+          <div className="panel-title"><FolderOpen size={16}/> Agendamentos ativos</div>
           {ativos.length===0
-            ? <EmptyState icon="✅" title="Tudo em ordem!" subtitle="Não há agendamentos pendentes de confirmação ou conclusão no momento." />
+            ? <EmptyState icon={<CheckCircle2 size={34}/>} title="Tudo em ordem!" subtitle="Não há agendamentos pendentes de confirmação ou conclusão no momento." />
             : <>
               <SearchBox value={buscaGerenciar} onChange={setBuscaGerenciar} placeholder="Buscar por paciente, psicólogo ou data..." />
               {filtrados.length===0 ? (
-                <EmptyState icon="🔍" title="Nenhum resultado" subtitle="Tente buscar por outro termo." />
+                <EmptyState icon={<Search size={34}/>} title="Nenhum resultado" subtitle="Tente buscar por outro termo." />
               ) :
               <div className="tw"><table>
                 <thead><tr><th>Data</th><th>Hora</th><th>Paciente</th><th>Psicólogo</th><th>Status</th><th>Observações</th><th>Ações</th></tr></thead>
@@ -2803,9 +2815,9 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                     <td><span className={`st st-${a.status}`}>{a.status}</span></td>
                     <td style={{maxWidth:200}}>{a.observacoes ? <span style={{fontSize:12.5,color:"var(--ink-2)"}}>{a.observacoes}</span> : <span style={{color:"var(--ink-3)"}}>—</span>}</td>
                     <td style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-                      {a.status==="pendente"   && <button className="btn btn-sm btn-success" onClick={()=>atualizar(a.id,"confirmado")}>✅ Confirmar</button>}
-                      {a.status==="confirmado" && <button className="btn btn-sm btn-success" onClick={()=>atualizar(a.id,"concluido")}>🟣 Concluir</button>}
-                      <button className="btn btn-sm btn-danger" onClick={()=>pedirCancelamentoAg(a)}>❌ Cancelar</button>
+                      {a.status==="pendente"   && <button className="btn btn-sm btn-success" onClick={()=>atualizar(a.id,"confirmado")}><CheckCircle2 size={14} style={{verticalAlign:"-2px"}}/> Confirmar</button>}
+                      {a.status==="confirmado" && <button className="btn btn-sm btn-success" onClick={()=>atualizar(a.id,"concluido")}><Circle size={13} fill="currentColor" style={{verticalAlign:"-2px"}}/> Concluir</button>}
+                      <button className="btn btn-sm btn-danger" onClick={()=>pedirCancelamentoAg(a)}><XCircle size={14} style={{verticalAlign:"-2px"}}/> Cancelar</button>
                     </td>
                   </tr>
                 ))}</tbody>
@@ -2821,10 +2833,10 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
 
   if (aba==="feedback") return (
     <div>
-      <div className="dash-title">✍️ Dar Feedback</div>
+      <div className="dash-title"><PenLine size={20}/> Dar Feedback</div>
       <div className="dash-sub">Avalie uma sessão de atendimento realizada</div>
       <div className="panel">
-        <div className="panel-title">📝 Novo feedback</div>
+        <div className="panel-title"><FileText size={16}/> Novo feedback</div>
         <div className="fg"><label>Psicólogo(a) *</label>
           <select value={fbPsico} onChange={e=>setFbP(e.target.value)}>
             <option value="">Selecione...</option>
@@ -2840,7 +2852,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
         <div className="fg"><label>Avaliação da sessão</label>
           <div style={{display:"flex",gap:6,marginTop:4}}>
             {[1,2,3,4,5].map(n=>(
-              <button key={n} onClick={()=>setFbN(n)} style={{fontSize:26,background:"none",border:"none",cursor:"pointer",opacity:n<=fbNota?1:.25,transition:"opacity .15s"}}>⭐</button>
+              <button key={n} onClick={()=>setFbN(n)} style={{color:"var(--amber)",display:"inline-flex",background:"none",border:"none",cursor:"pointer",opacity:n<=fbNota?1:.25,transition:"opacity .15s"}}><Star size={24} fill="currentColor"/></button>
             ))}
           </div>
         </div>
@@ -2851,11 +2863,11 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
       </div>
       {fbs.length>0 && (
         <div className="panel">
-          <div className="panel-title">📄 Feedbacks anteriores</div>
+          <div className="panel-title"><MessageCircle size={16}/> Feedbacks anteriores</div>
           {fbs.map(fb=>(
             <div className="fb-card" key={fb.id}>
               <div className="fb-hdr"><h4>{fb.psicologo_nome} · {fb.paciente_nome||"—"}</h4><span>{fmt(fb.created_at?.slice(0,10))}</span></div>
-              <div className="stars">{"⭐".repeat(fb.nota||0)}</div>
+              <div className="stars" style={{display:"inline-flex",gap:2,color:"var(--amber)"}}>{Array.from({length:fb.nota||0}).map((_,i)=><Star key={i} size={14} fill="currentColor"/>)}</div>
               <p className="fb-text" style={{marginTop:8}}>{fb.texto}</p>
             </div>
           ))}
@@ -2875,26 +2887,26 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
         `Olá, ${msgSel.nome}!\n\n${replyTxt}\n\nAtenciosamente,\nEquipe da Clínica Escola de Psicologia — FUMEC\nclinicaescola@fumec.br`
       );
       window.open(`mailto:${msgSel.email}?subject=${assunto}&body=${corpo}`, "_blank");
-      toast("✅ Cliente de e-mail aberto para envio!");
+      toast("Cliente de e-mail aberto para envio!");
       setReplyTxt("");
     }
 
     return (
       <div>
-        <div className="dash-title">✉️ Fale Conosco</div>
+        <div className="dash-title"><Mail size={20}/> Fale Conosco</div>
         <div className="dash-sub">{naoLidas > 0 ? `${naoLidas} mensagem(ns) não lida(s)` : "Todas as mensagens foram lidas"}</div>
         {loading ? <Loading kind="cards" rows={3} /> : <>
           {msgSel ? (
             <div className="panel">
-              <button className="btn btn-outline btn-sm" style={{marginBottom:"1.25rem"}} onClick={()=>{setMsgSel(null);setReplyTxt("");}}>← Voltar para caixa de entrada</button>
+              <button className="btn btn-outline btn-sm" style={{marginBottom:"1.25rem"}} onClick={()=>{setMsgSel(null);setReplyTxt("");}}><ArrowLeft size={14} style={{verticalAlign:"-2px"}}/> Voltar para caixa de entrada</button>
               {/* Cabeçalho da mensagem */}
               <div style={{background:"var(--bg-warm)",borderRadius:"var(--r-sm)",padding:"1rem 1.25rem",marginBottom:"1rem"}}>
                 <div style={{fontFamily:"var(--font-head)",fontSize:17,fontWeight:800,color:"var(--ink)",marginBottom:6}}>{msgSel.assunto}</div>
                 <div style={{display:"flex",gap:16,flexWrap:"wrap"}}>
-                  <span style={{fontSize:13,color:"var(--ink-3)"}}>👤 <strong>{msgSel.nome}</strong></span>
-                  <span style={{fontSize:13,color:"var(--teal)"}}>✉️ {msgSel.email}</span>
-                  {msgSel.matricula && <span style={{fontSize:13,color:"var(--ink-3)"}}>🎓 Matrícula: {msgSel.matricula}</span>}
-                  <span style={{fontSize:12,color:"var(--ink-3)"}}>🕐 {msgSel.created_at ? new Date(msgSel.created_at).toLocaleString("pt-BR") : ""}</span>
+                  <span style={{fontSize:13,color:"var(--ink-3)",display:"inline-flex",alignItems:"center",gap:4}}><User size={13}/> <strong>{msgSel.nome}</strong></span>
+                  <span style={{fontSize:13,color:"var(--teal)",display:"inline-flex",alignItems:"center",gap:4}}><Mail size={13}/> {msgSel.email}</span>
+                  {msgSel.matricula && <span style={{fontSize:13,color:"var(--ink-3)",display:"inline-flex",alignItems:"center",gap:4}}><GraduationCap size={13}/> Matrícula: {msgSel.matricula}</span>}
+                  <span style={{fontSize:12,color:"var(--ink-3)",display:"inline-flex",alignItems:"center",gap:4}}><Clock size={12}/> {msgSel.created_at ? new Date(msgSel.created_at).toLocaleString("pt-BR") : ""}</span>
                 </div>
               </div>
               {/* Corpo da mensagem */}
@@ -2903,7 +2915,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
               </div>
               {/* Campo de resposta */}
               <div style={{borderTop:"1px solid var(--border)",paddingTop:"1.25rem"}}>
-                <div style={{fontFamily:"var(--font-head)",fontSize:14,fontWeight:700,color:"var(--ink)",marginBottom:10}}>✍️ Responder para {msgSel.nome}</div>
+                <div style={{fontFamily:"var(--font-head)",fontSize:14,fontWeight:700,color:"var(--ink)",marginBottom:10,display:"flex",alignItems:"center",gap:6}}><PenLine size={14}/> Responder para {msgSel.nome}</div>
                 <div className="al al-info" style={{marginBottom:"1rem",fontSize:12.5}}>
                   A resposta será aberta no seu cliente de e-mail padrão endereçada para <strong>{msgSel.email}</strong>.
                 </div>
@@ -2922,13 +2934,13 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                   disabled={!replyTxt.trim()}
                   style={{opacity:replyTxt.trim()?1:.5}}
                 >
-                  📧 Abrir e-mail para enviar resposta
+                  <Mail size={14} style={{verticalAlign:"-2px"}}/> Abrir e-mail para enviar resposta
                 </button>
               </div>
             </div>
           ) : (
             mensagens.length===0
-              ? <EmptyState icon="✉️" title="Nenhuma mensagem recebida" subtitle="Mensagens enviadas pelo formulário Fale Conosco do site aparecerão aqui." />
+              ? <EmptyState icon={<Mail size={34}/>} title="Nenhuma mensagem recebida" subtitle="Mensagens enviadas pelo formulário Fale Conosco do site aparecerão aqui." />
               : <>
                 <SearchBox value={buscaUsuarios} onChange={setBuscaUsuarios} placeholder="Buscar por nome, assunto ou e-mail..." />
                 {(() => {
@@ -2938,7 +2950,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                     || m.assunto.toLowerCase().includes(term)
                     || m.email.toLowerCase().includes(term)
                   );
-                  if (filtradas.length===0) return <EmptyState icon="🔍" title="Nenhum resultado" subtitle="Tente buscar por outro termo." />;
+                  if (filtradas.length===0) return <EmptyState icon={<Search size={34}/>} title="Nenhum resultado" subtitle="Tente buscar por outro termo." />;
                   return filtradas.map(m=>(
                     <div className={`msg-card ${!m.lida?"unread":""}`} key={m.id} onClick={()=>marcarMsgLida(m)}>
                       <div className="msg-card-hdr">
@@ -2959,7 +2971,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
 
   return (
     <div>
-      <div className="dash-title">Olá, {profile.nome.split(" ")[0]}! 👩‍🏫</div>
+      <div className="dash-title">Olá, {profile.nome.split(" ")[0]}!</div>
       <div className="dash-sub">Painel de supervisão e administração da clínica</div>
       <ConfirmModal config={confirmCfg} onClose={() => setConfirmCfg(null)} />
       {loading ? <>
@@ -2998,7 +3010,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
           const totalDone = items.filter(i=>i.done).length;
           return (
             <div className="panel">
-              <div className="panel-title">✅ Primeiros passos ({totalDone}/{items.length} concluídos)</div>
+              <div className="panel-title"><CheckCircle2 size={16}/> Primeiros passos ({totalDone}/{items.length} concluídos)</div>
               <div style={{display:"flex",flexDirection:"column",gap:8}}>
                 {items.map((it,i)=>(
                   <div key={i} onClick={()=>!it.done && setAba(it.aba)} style={{
@@ -3007,9 +3019,9 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                     cursor:it.done?"default":"pointer",opacity:it.done?.7:1,
                     border:`1px solid ${it.done?"transparent":"var(--border)"}`,
                   }}>
-                    <span style={{fontSize:16}}>{it.done?"✅":"⬜"}</span>
+                    <span style={{display:"flex",color:it.done?"var(--green)":"var(--ink-3)"}}>{it.done?<CheckCircle2 size={16}/>:<Circle size={16}/>}</span>
                     <span style={{fontSize:13.5,color:"var(--ink)",flex:1,textDecoration:it.done?"line-through":"none"}}>{it.label}</span>
-                    {!it.done && <span style={{fontSize:12,color:"var(--teal)",fontWeight:600}}>Resolver →</span>}
+                    {!it.done && <span style={{fontSize:12,color:"var(--teal)",fontWeight:600}}>Resolver <ArrowRight size={12} style={{verticalAlign:"-2px"}}/></span>}
                   </div>
                 ))}
               </div>
@@ -3020,7 +3032,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
         {/* Supervisores pendentes no início */}
         {usuarios.filter(u=>u.tipo==="supervisor"&&u.status==="pendente_aprovacao").length>0 && (
           <div className="panel" style={{borderColor:"var(--amber)",borderWidth:2}}>
-            <div className="panel-title" style={{color:"var(--amber)"}}>⏳ Supervisores aguardando aprovação ({usuarios.filter(u=>u.tipo==="supervisor"&&u.status==="pendente_aprovacao").length})</div>
+            <div className="panel-title" style={{color:"var(--amber)"}}><Hourglass size={14} style={{verticalAlign:"-2px"}}/> Supervisores aguardando aprovação ({usuarios.filter(u=>u.tipo==="supervisor"&&u.status==="pendente_aprovacao").length})</div>
             {usuarios.filter(u=>u.tipo==="supervisor"&&u.status==="pendente_aprovacao").map(u=>(
               <div className="user-card" key={u.id}>
                 <div className="user-card-left">
@@ -3028,8 +3040,8 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                   <div><div className="user-info-name">{u.nome}</div><div className="user-info-sub">{u.email} · Supervisor(a)</div></div>
                 </div>
                 <div className="user-card-actions">
-                  <button className="btn btn-sm btn-success" onClick={()=>setStatusUsuario(u.id,"ativo")}>✅ Aprovar</button>
-                  <button className="btn btn-sm btn-danger"  onClick={()=>setStatusUsuario(u.id,"inativo")}>❌ Rejeitar</button>
+                  <button className="btn btn-sm btn-success" onClick={()=>setStatusUsuario(u.id,"ativo")}><CheckCircle2 size={14} style={{verticalAlign:"-2px"}}/> Aprovar</button>
+                  <button className="btn btn-sm btn-danger"  onClick={()=>setStatusUsuario(u.id,"inativo")}><XCircle size={14} style={{verticalAlign:"-2px"}}/> Rejeitar</button>
                 </div>
               </div>
             ))}
@@ -3039,7 +3051,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
         {/* Psicólogos pendentes no início */}
         {usuarios.filter(u=>u.tipo==="psicologo"&&u.status==="pendente_aprovacao").length>0 && (
           <div className="panel" style={{borderColor:"var(--teal)",borderWidth:2}}>
-            <div className="panel-title" style={{color:"var(--teal)"}}>⏳ Psicólogos aguardando ativação ({usuarios.filter(u=>u.tipo==="psicologo"&&u.status==="pendente_aprovacao").length})</div>
+            <div className="panel-title" style={{color:"var(--teal)"}}><Hourglass size={14} style={{verticalAlign:"-2px"}}/> Psicólogos aguardando ativação ({usuarios.filter(u=>u.tipo==="psicologo"&&u.status==="pendente_aprovacao").length})</div>
             {usuarios.filter(u=>u.tipo==="psicologo"&&u.status==="pendente_aprovacao").map(u=>(
               <div className="user-card" key={u.id}>
                 <div className="user-card-left">
@@ -3047,8 +3059,8 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
                   <div><div className="user-info-name">{u.nome}</div><div className="user-info-sub">{u.email}{u.crp&&` · CRP: ${u.crp}`}</div></div>
                 </div>
                 <div className="user-card-actions">
-                  <button className="btn btn-sm btn-success" onClick={()=>setStatusUsuario(u.id,"ativo")}>✅ Ativar para atender</button>
-                  <button className="btn btn-sm btn-danger"  onClick={()=>setStatusUsuario(u.id,"inativo")}>❌ Rejeitar</button>
+                  <button className="btn btn-sm btn-success" onClick={()=>setStatusUsuario(u.id,"ativo")}><CheckCircle2 size={14} style={{verticalAlign:"-2px"}}/> Ativar para atender</button>
+                  <button className="btn btn-sm btn-danger"  onClick={()=>setStatusUsuario(u.id,"inativo")}><XCircle size={14} style={{verticalAlign:"-2px"}}/> Rejeitar</button>
                 </div>
               </div>
             ))}
@@ -3057,27 +3069,27 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
 
         {todos.filter(a=>a.status==="pendente").length>0 && (
           <div className="panel">
-            <div className="panel-title">⏳ Pendentes de aprovação</div>
+            <div className="panel-title"><Hourglass size={16}/> Pendentes de aprovação</div>
             <div className="tw"><table>
               <thead><tr><th>Data</th><th>Hora</th><th>Paciente</th><th>Psicólogo</th><th>Ações</th></tr></thead>
               <tbody>{todos.filter(a=>a.status==="pendente").slice(0,5).map(a=>(
                 <tr key={a.id}>
                   <td>{fmt(a.data)}</td><td>{fmtH(a.hora)}</td><td>{a.paciente_nome||"—"}</td><td>{a.psicologo_nome||"—"}</td>
                   <td style={{display:"flex",gap:6}}>
-                    <button className="btn btn-sm btn-success" onClick={()=>atualizar(a.id,"confirmado")}>✅ Confirmar</button>
-                    <button className="btn btn-sm btn-danger"  onClick={()=>pedirCancelamentoAg(a)}>❌ Cancelar</button>
+                    <button className="btn btn-sm btn-success" onClick={()=>atualizar(a.id,"confirmado")}><CheckCircle2 size={14} style={{verticalAlign:"-2px"}}/> Confirmar</button>
+                    <button className="btn btn-sm btn-danger"  onClick={()=>pedirCancelamentoAg(a)}><XCircle size={14} style={{verticalAlign:"-2px"}}/> Cancelar</button>
                   </td>
                 </tr>
               ))}</tbody>
             </table></div>
             {todos.filter(a=>a.status==="pendente").length>5 && (
-              <button className="load-more-btn" onClick={() => setAba("gerenciar")}>Ver todos os {todos.filter(a=>a.status==="pendente").length} pendentes →</button>
+              <button className="load-more-btn" onClick={() => setAba("gerenciar")}>Ver todos os {todos.filter(a=>a.status==="pendente").length} pendentes <ArrowRight size={13} style={{verticalAlign:"-2px"}}/></button>
             )}
           </div>
         )}
         {psicos.length>0 && (
           <div className="panel">
-            <div className="panel-title">📊 Resumo por psicólogo</div>
+            <div className="panel-title"><BarChart3 size={16}/> Resumo por psicólogo</div>
             <div className="tw"><table>
               <thead><tr><th>Psicólogo(a)</th><th>Status</th><th>Total</th><th>Confirmados</th><th>Concluídos</th><th>Pendentes</th></tr></thead>
               <tbody>{psicos.map(p=>{
