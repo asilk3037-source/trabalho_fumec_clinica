@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tutorial · FUMEC Clínica Escola de Psicologia</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --ink:#0B2D4E;--ink2:#3D5A73;--ink3:#7A96AD;
+  --teal:#1A7A6E;--teal-l:#E8F5F3;--teal-m:#2A9D8F;
+  --sky:#1565C0;--sky-l:#E3F0FF;
+  --bg:#fff;--bgw:#F7F5F2;--border:#E4E9EF;
+  --red:#C0392B;--red-bg:#FDF0EE;
+  --amber:#B45309;--amber-bg:#FFFBEB;
+  --fh:'Plus Jakarta Sans',system-ui,sans-serif;
+  --fb:'Inter',system-ui,sans-serif;
+}
+body{font-family:var(--fb);color:var(--ink);background:var(--bgw);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+
+/* COVER */
+.cover{
+  background:linear-gradient(160deg,#040e1c 0%,#071828 40%,#0B2D4E 75%,#0d3a5c 100%);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:4rem 2rem;
+  position:relative;overflow:hidden;
+}
+.cover::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:34px 34px;
+  mask-image:linear-gradient(to bottom,transparent,rgba(0,0,0,.5) 30%,rgba(0,0,0,.5) 70%,transparent);
+  pointer-events:none;
+}
+.cover-orb{position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none;}
+.orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(26,122,110,.2),transparent 70%);top:-100px;right:-100px;}
+.orb2{width:300px;height:300px;background:radial-gradient(circle,rgba(21,101,192,.15),transparent 70%);bottom:-60px;left:60px;}
+.cover-logo{
+  width:72px;height:72px;border-radius:18px;background:rgba(26,122,110,.25);
+  border:1px solid rgba(45,212,191,.3);display:flex;align-items:center;
+  justify-content:center;margin:0 auto 2rem;position:relative;
+}
+.logo-svg{width:44px;height:44px;}
+.cover-badge{
+  display:inline-block;background:rgba(26,122,110,.18);border:1px solid rgba(26,122,110,.35);
+  color:#5EEAD4;border-radius:100px;font-size:12px;font-weight:600;letter-spacing:.5px;
+  padding:5px 16px;text-transform:uppercase;margin-bottom:1.5rem;position:relative;
+}
+.cover h1{
+  font-family:var(--fh);font-size:clamp(32px,6vw,56px);font-weight:800;
+  color:#fff;line-height:1.12;margin-bottom:1.25rem;letter-spacing:-.5px;
+  max-width:700px;position:relative;
+}
+.cover h1 em{font-style:normal;background:linear-gradient(90deg,#2DD4BF,#60A5FA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.cover-sub{color:rgba(255,255,255,.58);font-size:17px;line-height:1.7;max-width:500px;margin:0 auto 3rem;position:relative;}
+.cover-chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;position:relative;margin-bottom:3rem;}
+.chip{
+  display:flex;align-items:center;gap:8px;padding:10px 18px;
+  border-radius:100px;font-size:13.5px;font-weight:600;
+  border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(8px);
+}
+.chip-pac{background:rgba(33,150,243,.15);color:#90CAF9;}
+.chip-psi{background:rgba(26,122,110,.2);color:#80CBC4;}
+.chip-sup{background:rgba(103,58,183,.2);color:#CE93D8;}
+.cover-url{
+  position:relative;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;padding:12px 22px;display:flex;align-items:center;gap:10px;
+  color:rgba(255,255,255,.5);font-size:13px;
+}
+.cover-url a{color:#5EEAD4;text-decoration:none;font-weight:600;}
+.cover-url a:hover{text-decoration:underline;}
+.scroll-hint{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  color:rgba(255,255,255,.3);font-size:13px;display:flex;flex-direction:column;
+  align-items:center;gap:6px;
+}
+.scroll-arrow{width:1px;height:28px;background:linear-gradient(to bottom,rgba(255,255,255,.3),transparent);}
+
+/* NAVIGATION INDEX */
+.toc{background:var(--bg);border-bottom:1px solid var(--border);padding:2rem;position:sticky;top:0;z-index:100;}
+.toc-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+.toc-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--ink3);flex-shrink:0;}
+.toc-links{display:flex;gap:6px;flex-wrap:wrap;}
+.toc-link{
+  padding:5px 13px;border-radius:100px;font-size:13px;font-weight:500;
+  text-decoration:none;border:1px solid var(--border);color:var(--ink2);transition:all .18s;
+}
+.toc-link:hover{background:var(--bgw);border-color:var(--border);}
+.toc-link.pac{color:#1565C0;background:#E3F0FF;border-color:#BFDBFE;}
+.toc-link.psi{color:#1A7A6E;background:#E8F5F3;border-color:#A7D7D2;}
+.toc-link.sup{color:#6B21A8;background:#F3E8FF;border-color:#D8B4FE;}
+
+/* MAIN */
+.wrap{max-width:900px;margin:0 auto;padding:0 2rem 6rem;}
+
+/* SECTION HERO */
+.sec-hero{
+  margin:4rem 0 2rem;border-radius:20px;overflow:hidden;
+  box-shadow:0 4px 32px rgba(11,45,78,.08);
+}
+.sec-hero-head{
+  padding:2.5rem 2.5rem 2rem;display:flex;align-items:center;gap:1.5rem;
+}
+.role-icon{
+  width:56px;height:56px;border-radius:14px;display:flex;
+  align-items:center;justify-content:center;font-size:24px;flex-shrink:0;
+}
+.sec-hero-head h2{font-family:var(--fh);font-size:26px;font-weight:800;letter-spacing:-.3px;margin-bottom:4px;}
+.sec-hero-head p{font-size:14px;opacity:.75;}
+.sec-hero-body{padding:0 2.5rem 2.5rem;}
+
+/* PACIENTE */
+.pac-head{background:linear-gradient(135deg,#1565C0,#1E88E5);color:#fff;}
+.pac-icon{background:rgba(255,255,255,.15);}
+/* PSICÓLOGO */
+.psi-head{background:linear-gradient(135deg,#1A7A6E,#2A9D8F);color:#fff;}
+.psi-icon{background:rgba(255,255,255,.15);}
+/* SUPERVISOR */
+.sup-head{background:linear-gradient(135deg,#5B21B6,#7C3AED);color:#fff;}
+.sup-icon{background:rgba(255,255,255,.15);}
+
+/* STEP FLOW */
+.steps{display:flex;flex-direction:column;gap:0;}
+.step{display:flex;gap:1.25rem;padding:1.5rem 0;border-bottom:1px solid var(--border);}
+.step:last-child{border-bottom:none;}
+.step-num-col{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+.step-num{
+  width:36px;height:36px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-family:var(--fh);font-size:14px;font-weight:800;flex-shrink:0;
+}
+.step-line{width:2px;flex:1;min-height:20px;margin-top:6px;}
+.step:last-child .step-line{display:none;}
+.step-body{flex:1;padding-top:6px;}
+.step-body h3{font-family:var(--fh);font-size:16px;font-weight:700;margin-bottom:6px;}
+.step-body p{font-size:14px;color:var(--ink2);line-height:1.65;margin-bottom:10px;}
+.step-body p:last-child{margin-bottom:0;}
+
+/* PACIENTE steps */
+.pac .step-num{background:#E3F0FF;color:#1565C0;}
+.pac .step-line{background:#DBEAFE;}
+.pac .step-body h3{color:#1565C0;}
+/* PSICÓLOGO steps */
+.psi .step-num{background:#E8F5F3;color:#1A7A6E;}
+.psi .step-line{background:#A7D7D2;}
+.psi .step-body h3{color:#1A7A6E;}
+/* SUPERVISOR steps */
+.sup .step-num{background:#F3E8FF;color:#6B21A8;}
+.sup .step-line{background:#DDD6FE;}
+.sup .step-body h3{color:#6B21A8;}
+
+/* SCREEN MOCKUP */
+.mockup-wrap{margin:1rem 0 0;border-radius:12px;overflow:hidden;border:1px solid var(--border);}
+.mockup-bar{
+  background:#F1F5F9;border-bottom:1px solid var(--border);
+  padding:8px 14px;display:flex;align-items:center;gap:6px;
+}
+.dot-r{width:10px;height:10px;border-radius:50%;background:#FC605B;}
+.dot-y{width:10px;height:10px;border-radius:50%;background:#FDBC40;}
+.dot-g{width:10px;height:10px;border-radius:50%;background:#34C749;}
+.url-bar{
+  flex:1;background:#fff;border-radius:4px;padding:3px 10px;
+  font-size:11px;color:var(--ink3);border:1px solid var(--border);
+}
+.mockup-body{background:#fff;padding:1.25rem;font-size:13px;}
+
+/* FEATURE GRID */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:1rem;}
+.feat-card{
+  background:#fff;border:1px solid var(--border);border-radius:12px;
+  padding:1.1rem 1.25rem;transition:box-shadow .18s;
+}
+.feat-card:hover{box-shadow:0 4px 16px rgba(11,45,78,.08);}
+.feat-icon{font-size:22px;margin-bottom:8px;}
+.feat-card h4{font-family:var(--fh);font-size:13.5px;font-weight:700;margin-bottom:4px;}
+.feat-card p{font-size:12.5px;color:var(--ink2);line-height:1.55;}
+
+/* CREDENTIALS */
+.creds{
+  background:linear-gradient(135deg,#0B2D4E,#185FA5);border-radius:16px;
+  padding:2rem;margin:3rem 0;
+}
+.creds h3{font-family:var(--fh);font-size:18px;font-weight:800;color:#fff;margin-bottom:.5rem;}
+.creds p{font-size:13.5px;color:rgba(255,255,255,.6);margin-bottom:1.5rem;}
+.creds-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;}
+.cred-card{
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;padding:1rem 1.25rem;
+}
+.cred-badge{
+  display:inline-block;padding:3px 10px;border-radius:100px;
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;
+}
+.badge-pac{background:#DBEAFE;color:#1E40AF;}
+.badge-psi{background:#D1FAE5;color:#065F46;}
+.badge-sup{background:#EDE9FE;color:#5B21B6;}
+.cred-email{font-size:13.5px;font-weight:600;color:#fff;margin-bottom:2px;}
+.cred-pass{font-size:12.5px;color:rgba(255,255,255,.5);}
+
+/* ALERT */
+.al-info{background:var(--sky-l);border:1px solid #BFDBFE;border-radius:10px;padding:1rem 1.25rem;font-size:13.5px;color:#1E3A5F;margin:1rem 0;}
+.al-warn{background:var(--amber-bg);border:1px solid #FDE68A;border-radius:10px;padding:1rem 1.25rem;font-size:13.5px;color:var(--amber);margin:1rem 0;}
+.al-ok{background:var(--teal-l);border:1px solid #A7D7D2;border-radius:10px;padding:1rem 1.25rem;font-size:13.5px;color:var(--teal);margin:1rem 0;}
+
+/* MOBILE SECTION */
+.mobile-section{background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:2.5rem;margin:3rem 0;}
+.mobile-section h2{font-family:var(--fh);font-size:22px;font-weight:800;color:var(--ink);margin-bottom:.5rem;}
+.mobile-section .sub{color:var(--ink2);font-size:14.5px;margin-bottom:2rem;}
+.phone-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.5rem;}
+.phone-frame{
+  background:#fff;border:2px solid var(--border);border-radius:28px;
+  overflow:hidden;box-shadow:0 4px 20px rgba(11,45,78,.08);
+}
+.phone-notch{
+  background:#111;height:28px;display:flex;align-items:center;justify-content:center;
+}
+.phone-notch-hole{width:60px;height:10px;background:#333;border-radius:5px;}
+.phone-screen{padding:.75rem;background:#F7F5F2;min-height:220px;}
+.phone-nav{
+  background:var(--ink);border-radius:10px;padding:10px 12px;
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;
+}
+.phone-nav-logo{color:#fff;font-size:12px;font-weight:700;font-family:var(--fh);}
+.phone-nav-btn{background:rgba(255,255,255,.15);color:#fff;font-size:9px;padding:3px 8px;border-radius:5px;}
+.phone-body{background:#fff;border-radius:8px;padding:10px;}
+.phone-title{font-family:var(--fh);font-size:12px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.phone-kpi-row{display:flex;gap:5px;margin-bottom:8px;}
+.phone-kpi{background:var(--bgw);border-radius:6px;padding:6px;flex:1;text-align:center;}
+.phone-kpi-n{font-family:var(--fh);font-size:14px;font-weight:800;color:var(--teal);}
+.phone-kpi-l{font-size:8px;color:var(--ink3);margin-top:1px;}
+.phone-row{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);}
+.phone-row:last-child{border-bottom:none;}
+.phone-av{width:22px;height:22px;border-radius:6px;background:var(--teal);color:#fff;font-size:9px;font-weight:700;font-family:var(--fh);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.phone-row-text{flex:1;}
+.phone-row-name{font-size:10px;font-weight:600;color:var(--ink);}
+.phone-row-sub{font-size:8.5px;color:var(--ink3);}
+.phone-st{font-size:8px;font-weight:700;padding:2px 6px;border-radius:100px;}
+.st-c{background:#D1FAE5;color:#065F46;}
+.st-p{background:#FEF3C7;color:#92400E;}
+.st-a{background:#EDE9FE;color:#5B21B6;}
+.phone-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:8px;}
+.phone-cal-d{text-align:center;font-size:7px;color:var(--ink3);padding:2px 0;font-weight:600;}
+.phone-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:9px;border-radius:4px;}
+.phone-day.t{background:var(--teal);color:#fff;font-weight:700;}
+.phone-day.s{background:var(--ink);color:#fff;font-weight:700;}
+.phone-day.p{color:#ccc;}
+.phone-day.e{}
+
+/* FOOTER */
+.footer{background:var(--ink);padding:3rem 2rem;margin-top:0;}
+.footer-inner{max-width:900px;margin:0 auto;text-align:center;}
+.footer h3{font-family:var(--fh);font-size:20px;font-weight:800;color:#fff;margin-bottom:.5rem;}
+.footer p{font-size:13.5px;color:rgba(255,255,255,.5);margin-bottom:2rem;}
+.footer-link{
+  display:inline-block;background:var(--teal);color:#fff;text-decoration:none;
+  padding:12px 28px;border-radius:10px;font-weight:600;font-size:14.5px;
+  transition:background .18s;
+}
+.footer-link:hover{background:var(--teal-m);}
+.footer-meta{color:rgba(255,255,255,.25);font-size:12px;margin-top:2rem;}
+
+/* DIVIDER */
+.div-wrap{display:flex;align-items:center;gap:1rem;margin:2.5rem 0 0;}
+.div-line{flex:1;height:1px;background:var(--border);}
+.div-text{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--ink3);}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .sec-hero-head{padding:1.75rem 1.5rem 1.5rem;gap:1rem;}
+  .sec-hero-head h2{font-size:20px;}
+  .sec-hero-body{padding:0 1.5rem 1.5rem;}
+  .step{gap:1rem;}
+  .wrap{padding:0 1rem 4rem;}
+  .cover{padding:3rem 1.25rem;}
+  .mobile-section{padding:1.75rem 1.25rem;}
+  .creds{padding:1.5rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-orb orb1"></div>
+  <div class="cover-orb orb2"></div>
+
+  <div class="cover-logo">
+    <svg class="logo-svg" viewBox="0 0 48 48" fill="none">
+      <path d="M24 10 C16 10 11 16 11 21 C11 25 13 28 16 30 C16 33 18 36 21 37 L24 38" stroke="url(#gl)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      <path d="M24 10 C32 10 37 16 37 21 C37 25 35 28 32 30 C32 33 30 36 27 37 L24 38" stroke="url(#gl)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      <path d="M24 10 L24 38" stroke="url(#gl)" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M20.5 21.5 C20.5 20 21.5 19 23 19.5 C24 19.8 24 19.8 25 19.5 C26.5 19 27.5 20 27.5 21.5 C27.5 23 26 24.5 24 26 C22 24.5 20.5 23 20.5 21.5Z" fill="url(#gl)"/>
+      <path d="M15 27 C13 25 13 22 15 22 C17 22 17 25 15 27Z" fill="url(#gl)" opacity=".7"/>
+      <path d="M33 27 C35 25 35 22 33 22 C31 22 31 25 33 27Z" fill="url(#gl)" opacity=".7"/>
+      <defs><linearGradient id="gl" x1="11" y1="10" x2="37" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#2DD4BF"/><stop offset="100%" stop-color="#60A5FA"/></linearGradient></defs>
+    </svg>
+  </div>
+
+  <div class="cover-badge">Guia de uso da plataforma</div>
+  <h1>Tutorial da <em>Clínica Escola</em><br/>de Psicologia FUMEC</h1>
+  <p class="cover-sub">Aprenda a usar cada funcionalidade da plataforma — para pacientes, psicólogos e supervisores.</p>
+
+  <div class="cover-chips">
+    <div class="chip chip-pac">🙋 Paciente</div>
+    <div class="chip chip-psi">🧑‍⚕️ Psicólogo</div>
+    <div class="chip chip-sup">👩‍🏫 Supervisor</div>
+  </div>
+
+  <div class="cover-url">
+    <span>🌐 Acesse em:</span>
+    <a href="https://asilk3037-source.github.io/trabalho_fumec_clinica/" target="_blank">asilk3037-source.github.io/trabalho_fumec_clinica</a>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Rolar para o tutorial</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</div>
+
+<!-- CREDENCIAIS -->
+<div class="wrap">
+<div class="creds">
+  <h3>🔑 Credenciais de acesso para teste</h3>
+  <p>Use os dados abaixo para testar a plataforma com cada perfil. A senha é igual para todos.</p>
+  <div class="creds-grid">
+    <div class="cred-card">
+      <div class="cred-badge badge-pac">Paciente</div>
+      <div class="cred-email">paciente@teste.com</div>
+      <div class="cred-pass">Senha: 123456</div>
+    </div>
+    <div class="cred-card">
+      <div class="cred-badge badge-psi">Psicólogo</div>
+      <div class="cred-email">psicologo@teste.com</div>
+      <div class="cred-pass">Senha: 123456</div>
+    </div>
+    <div class="cred-card">
+      <div class="cred-badge badge-sup">Supervisor</div>
+      <div class="cred-email">supervisor@teste.com</div>
+      <div class="cred-pass">Senha: 123456</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SEÇÃO PACIENTE -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="paciente" class="sec-hero">
+  <div class="sec-hero-head pac-head">
+    <div class="role-icon pac-icon">🙋</div>
+    <div>
+      <h2>Perfil Paciente</h2>
+      <p>Agende consultas, acompanhe seu histórico e cuide da sua saúde mental</p>
+    </div>
+  </div>
+  <div class="sec-hero-body">
+
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon">📅</div>
+        <h4>Agendar consulta</h4>
+        <p>Calendário interativo com horários disponíveis por psicólogo</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📋</div>
+        <h4>Minhas consultas</h4>
+        <p>Histórico completo e próximas sessões com status atualizado</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">👤</div>
+        <h4>Meu perfil</h4>
+        <p>Edite seus dados, matrícula e foto de perfil</p>
+      </div>
+    </div>
+
+    <div class="div-wrap"><div class="div-line"></div><div class="div-text">passo a passo</div><div class="div-line"></div></div>
+
+    <div class="steps pac">
+      <div class="step">
+        <div class="step-num-col">
+          <div class="step-num">1</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Acesse o site e clique em "Entrar / Cadastrar"</h3>
+          <p>No canto superior direito da tela inicial, clique no botão verde <strong>"Entrar / Cadastrar"</strong>. Um modal (janela pop-up) será aberto com as abas <em>Entrar na conta</em> e <em>Criar conta</em>.</p>
+          <div class="mockup-wrap">
+            <div class="mockup-bar"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div><div class="url-bar">asilk3037-source.github.io/trabalho_fumec_clinica/</div></div>
+            <div class="mockup-body" style="background:#0B2D4E;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:1.5rem;">
+              <div style="color:#fff;">
+                <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:.75rem;border:1px solid rgba(255,255,255,.15);padding:4px 12px;border-radius:100px;display:inline-block;">🏛️ Universidade FUMEC</div>
+                <div style="font-family:var(--fh);font-size:18px;font-weight:800;line-height:1.25;color:#fff;margin-bottom:.5rem;">Cuidar da sua mente é<br/>parte da <span style="color:#5EEAD4;">sua formação</span></div>
+                <div style="display:flex;gap:8px;margin-top:.75rem;">
+                  <div style="background:#1A7A6E;color:#fff;font-size:11px;padding:6px 14px;border-radius:7px;font-weight:600;">📅 Agendar consulta</div>
+                  <div style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);font-size:11px;padding:6px 14px;border-radius:7px;border:1px solid rgba(255,255,255,.2);">Conheça →</div>
+                </div>
+              </div>
+              <div style="background:rgba(255,255,255,.95);border-radius:12px;padding:1rem;width:200px;">
+                <div style="font-size:12px;font-weight:700;color:#0B2D4E;margin-bottom:8px;">Área do Usuário</div>
+                <div style="display:flex;background:#F1F5F9;border-radius:6px;padding:3px;gap:3px;margin-bottom:10px;">
+                  <div style="flex:1;background:#fff;text-align:center;padding:5px;border-radius:4px;font-size:10px;font-weight:600;color:#0B2D4E;">Entrar</div>
+                  <div style="flex:1;text-align:center;padding:5px;border-radius:4px;font-size:10px;color:#888;">Criar conta</div>
+                </div>
+                <div style="font-size:10px;color:#888;margin-bottom:3px;">E-mail</div>
+                <div style="border:1px solid #E4E9EF;border-radius:5px;padding:5px 8px;font-size:10px;color:#0B2D4E;margin-bottom:8px;">paciente@teste.com</div>
+                <div style="font-size:10px;color:#888;margin-bottom:3px;">Senha</div>
+                <div style="border:1px solid #1A7A6E;border-radius:5px;padding:5px 8px;font-size:10px;color:#0B2D4E;background:#E8F5F3;margin-bottom:10px;">••••••</div>
+                <div style="background:#0B2D4E;color:#fff;text-align:center;border-radius:6px;padding:7px;font-size:10px;font-weight:700;">Entrar</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num-col">
+          <div class="step-num">2</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Explore seu painel inicial</h3>
+          <p>Após fazer login, você verá seu <strong>dashboard</strong> com um resumo: consultas confirmadas, aguardando confirmação e sessões já realizadas. O menu lateral à esquerda dá acesso a todas as funcionalidades.</p>
+          <div class="al-info">💡 O menu lateral some em telas pequenas (celular). Nesse caso, use o botão de menu no topo da tela para navegar.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num-col">
+          <div class="step-num">3</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Agende uma consulta</h3>
+          <p>Clique em <strong>"Agendar Consulta"</strong> no menu lateral. Você verá três etapas:</p>
+          <p>① Escolha um dos psicólogos disponíveis clicando no nome dele.<br/>② No calendário, clique em um dia que não esteja acinzentado (dias passados ficam indisponíveis).<br/>③ No painel ao lado, selecione um dos horários disponíveis e clique em <strong>"Confirmar agendamento"</strong>.</p>
+          <div class="al-info">⏳ Após agendar, a consulta fica com status <span style="background:#FEF3C7;color:#92400E;padding:2px 8px;border-radius:100px;font-size:12px;font-weight:600;">aguardando</span> até o supervisor confirmar.</div>
+          <div class="mockup-wrap" style="margin-top:1rem;">
+            <div class="mockup-bar"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div><div class="url-bar">Agendar Consulta</div></div>
+            <div class="mockup-body" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div>
+                <div style="font-size:11px;font-weight:600;color:var(--ink);margin-bottom:8px;">📅 Junho 2026</div>
+                <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:10px;">
+                  <div style="text-align:center;color:var(--ink3);font-weight:600;padding:2px;">D</div><div style="text-align:center;color:var(--ink3);font-weight:600;padding:2px;">S</div><div style="text-align:center;color:var(--ink3);font-weight:600;padding:2px;">T</div><div style="text-align:center;color:var(--ink3);font-weight:600;padding:2px;">Q</div><div style="text-align:center;color:var(--ink3);font-weight:600;padding:2px;">Q</div><div style="text-align:center;color:var(--ink3);font-weight:600;padding:2px;">S</div><div style="text-align:center;color:var(--ink3);font-weight:600;padding:2px;">S</div>
+                  <div></div><div></div><div></div><div></div><div></div><div></div><div style="text-align:center;padding:2px;border-radius:3px;color:#ccc;">1</div>
+                  <div style="text-align:center;padding:2px;color:#ccc;">2</div><div style="text-align:center;padding:2px;color:#ccc;">3</div><div style="text-align:center;padding:2px;color:#ccc;">4</div><div style="text-align:center;padding:2px;color:#ccc;">5</div><div style="text-align:center;padding:2px;color:#ccc;">6</div><div style="text-align:center;padding:2px;color:#ccc;">7</div><div style="text-align:center;padding:2px;color:#ccc;">8</div>
+                  <div style="text-align:center;padding:2px;color:#ccc;">9</div><div style="text-align:center;padding:2px;color:#ccc;">10</div><div style="text-align:center;padding:2px;color:#ccc;">11</div><div style="text-align:center;padding:2px;background:#1A7A6E;color:#fff;border-radius:3px;font-weight:700;">12</div><div style="text-align:center;padding:2px;border-radius:3px;cursor:pointer;">13</div><div style="text-align:center;padding:2px;border-radius:3px;background:#0B2D4E;color:#fff;font-weight:700;">14</div><div style="text-align:center;padding:2px;">15</div>
+                  <div style="text-align:center;padding:2px;">16</div><div style="text-align:center;padding:2px;">17</div><div style="text-align:center;padding:2px;">18</div><div style="text-align:center;padding:2px;">19</div><div style="text-align:center;padding:2px;">20</div><div style="text-align:center;padding:2px;">21</div><div style="text-align:center;padding:2px;">22</div>
+                </div>
+              </div>
+              <div>
+                <div style="font-size:11px;font-weight:600;color:var(--ink);margin-bottom:8px;">🕐 14/06 — Horários</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+                  <div style="text-align:center;padding:6px;border:1.5px solid var(--border);border-radius:7px;font-size:10px;color:#ccc;">08:00 · ocupado</div>
+                  <div style="text-align:center;padding:6px;border:1.5px solid #1A7A6E;border-radius:7px;font-size:10px;background:#1A7A6E;color:#fff;font-weight:600;">09:00 ✓</div>
+                  <div style="text-align:center;padding:6px;border:1.5px solid var(--border);border-radius:7px;font-size:10px;">10:00</div>
+                  <div style="text-align:center;padding:6px;border:1.5px solid var(--border);border-radius:7px;font-size:10px;color:#ccc;">11:00 · ocupado</div>
+                  <div style="text-align:center;padding:6px;border:1.5px solid var(--border);border-radius:7px;font-size:10px;">14:00</div>
+                  <div style="text-align:center;padding:6px;border:1.5px solid var(--border);border-radius:7px;font-size:10px;">15:00</div>
+                </div>
+                <div style="background:#E8F5F3;border:1px solid #A7D7D2;border-radius:7px;padding:6px;margin-top:6px;font-size:10px;color:#1A7A6E;">✅ Selecionado: 14/06 às 09:00</div>
+                <div style="background:#0B2D4E;color:#fff;text-align:center;border-radius:7px;padding:6px;margin-top:5px;font-size:10px;font-weight:700;">Confirmar agendamento</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num-col">
+          <div class="step-num">4</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Acompanhe suas consultas</h3>
+          <p>Em <strong>"Minhas Consultas"</strong>, você vê toda a lista de sessões com data, horário, nome do psicólogo e status atual. Os possíveis status são:</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin:.75rem 0;">
+            <span style="background:#FEF3C7;color:#92400E;padding:4px 12px;border-radius:100px;font-size:12.5px;font-weight:600;">⏳ pendente</span>
+            <span style="background:#D1FAE5;color:#065F46;padding:4px 12px;border-radius:100px;font-size:12.5px;font-weight:600;">✅ confirmado</span>
+            <span style="background:#EDE9FE;color:#5B21B6;padding:4px 12px;border-radius:100px;font-size:12.5px;font-weight:600;">🟣 concluído</span>
+            <span style="background:#FEE2E2;color:#991B1B;padding:4px 12px;border-radius:100px;font-size:12.5px;font-weight:600;">❌ cancelado</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num-col">
+          <div class="step-num">5</div>
+        </div>
+        <div class="step-body">
+          <h3>Atualize seu perfil e foto</h3>
+          <p>Em <strong>"Meu Perfil"</strong>, você pode editar nome e matrícula. Para trocar a foto, clique no ícone da câmera 📷 que aparece no canto do avatar na barra lateral. A imagem é enviada automaticamente ao Supabase Storage.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SEÇÃO PSICÓLOGO -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="psicologo" class="sec-hero">
+  <div class="sec-hero-head psi-head">
+    <div class="role-icon psi-icon">🧑‍⚕️</div>
+    <div>
+      <h2>Perfil Psicólogo(a)</h2>
+      <p>Gerencie sua agenda, acompanhe atendimentos e receba feedback do supervisor</p>
+    </div>
+  </div>
+  <div class="sec-hero-body">
+
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon">🗓️</div>
+        <h4>Minha agenda</h4>
+        <p>Configure os dias e horários em que você pode atender cada semana</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📋</div>
+        <h4>Atendimentos</h4>
+        <p>Lista completa dos seus pacientes e sessões agendadas</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">💬</div>
+        <h4>Feedbacks</h4>
+        <p>Avaliações e observações recebidas do supervisor sobre suas sessões</p>
+      </div>
+    </div>
+
+    <div class="div-wrap"><div class="div-line"></div><div class="div-text">passo a passo</div><div class="div-line"></div></div>
+
+    <div class="steps psi">
+      <div class="step">
+        <div class="step-num-col">
+          <div class="step-num">1</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Faça login com sua conta de psicólogo</h3>
+          <p>Use seu e-mail e senha cadastrados. Após entrar, você verá seu painel com os indicadores: atendimentos confirmados, pendentes, concluídos e feedbacks recebidos.</p>
+          <div class="al-warn">⚠️ Contas de psicólogo precisam ser ativadas pelo supervisor. Se após criar a conta você não aparecer na lista de agendamento, entre em contato com o supervisor da clínica.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num-col">
+          <div class="step-num">2</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Configure sua disponibilidade semanal</h3>
+          <p>Clique em <strong>"Minha Agenda"</strong> no menu lateral. Você verá uma tabela com os dias da semana (Segunda a Sexta) e todos os horários disponíveis (08h às 17h).</p>
+          <p>Marque as caixas dos dias e horários em que você estará disponível para atender. Ao terminar, clique em <strong>"Salvar disponibilidade"</strong> — uma mensagem de sucesso confirmará que foi salvo.</p>
+          <div class="al-info">💡 Apenas os horários que você marcar aqui aparecerão disponíveis para os pacientes na tela de agendamento.</div>
+          <div class="mockup-wrap" style="margin-top:1rem;">
+            <div class="mockup-bar"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div><div class="url-bar">Minha Agenda — Horários disponíveis</div></div>
+            <div class="mockup-body">
+              <table style="width:100%;font-size:11px;border-collapse:collapse;">
+                <thead><tr><th style="text-align:left;color:var(--ink3);font-weight:600;padding:5px;width:80px;text-transform:uppercase;font-size:10px;">Dia</th><th style="text-align:center;font-size:10px;color:var(--ink3);font-weight:600;">08:00</th><th style="text-align:center;font-size:10px;color:var(--ink3);font-weight:600;">09:00</th><th style="text-align:center;font-size:10px;color:var(--ink3);font-weight:600;">10:00</th><th style="text-align:center;font-size:10px;color:var(--ink3);font-weight:600;">11:00</th><th style="text-align:center;font-size:10px;color:var(--ink3);font-weight:600;">14:00</th><th style="text-align:center;font-size:10px;color:var(--ink3);font-weight:600;">15:00</th></tr></thead>
+                <tbody>
+                  <tr style="border-top:1px solid var(--border)"><td style="padding:7px 5px;font-weight:600;color:var(--ink);">Segunda</td><td style="text-align:center;"><input type="checkbox" disabled/></td><td style="text-align:center;"><input type="checkbox" checked disabled style="accent-color:#1A7A6E;"/></td><td style="text-align:center;"><input type="checkbox" checked disabled style="accent-color:#1A7A6E;"/></td><td style="text-align:center;"><input type="checkbox" disabled/></td><td style="text-align:center;"><input type="checkbox" checked disabled style="accent-color:#1A7A6E;"/></td><td style="text-align:center;"><input type="checkbox" disabled/></td></tr>
+                  <tr style="border-top:1px solid var(--border)"><td style="padding:7px 5px;font-weight:600;color:var(--ink);">Terça</td><td style="text-align:center;"><input type="checkbox" disabled/></td><td style="text-align:center;"><input type="checkbox" checked disabled style="accent-color:#1A7A6E;"/></td><td style="text-align:center;"><input type="checkbox" checked disabled style="accent-color:#1A7A6E;"/></td><td style="text-align:center;"><input type="checkbox" disabled/></td><td style="text-align:center;"><input type="checkbox" checked disabled style="accent-color:#1A7A6E;"/></td><td style="text-align:center;"><input type="checkbox" checked disabled style="accent-color:#1A7A6E;"/></td></tr>
+                </tbody>
+              </table>
+              <div style="background:#E8F5F3;border:1px solid #A7D7D2;border-radius:7px;padding:8px 12px;font-size:11px;color:#1A7A6E;margin-top:10px;">✅ Disponibilidade salva com sucesso!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num-col">
+          <div class="step-num">3</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Acompanhe seus atendimentos</h3>
+          <p>Em <strong>"Atendimentos"</strong>, você vê todos os pacientes agendados com você, a data e horário de cada sessão e o status atual. O painel inicial também mostra um resumo rápido das próximas 5 sessões.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num-col">
+          <div class="step-num">4</div>
+        </div>
+        <div class="step-body">
+          <h3>Leia os feedbacks do supervisor</h3>
+          <p>Clique em <strong>"Feedbacks Recebidos"</strong> para ver as avaliações que o supervisor fez das suas sessões. Cada feedback mostra o nome do paciente atendido, a data, uma avaliação em estrelas (1–5) e as observações textuais do supervisor.</p>
+          <div class="mockup-wrap" style="margin-top:.75rem;">
+            <div class="mockup-bar"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div><div class="url-bar">Feedbacks Recebidos</div></div>
+            <div class="mockup-body">
+              <div style="border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:8px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:4px;">
+                  <span style="font-size:12.5px;font-weight:700;color:var(--ink);">Sessão com Ana Silva</span>
+                  <span style="font-size:11px;color:var(--ink3);">10/06/2026 · Supervisora Maria</span>
+                </div>
+                <div style="color:#F59E0B;font-size:15px;letter-spacing:1px;margin-bottom:6px;">⭐⭐⭐⭐⭐</div>
+                <p style="font-size:12px;color:var(--ink2);line-height:1.6;">Excelente condução da sessão. Boa escuta ativa e aplicação das técnicas de acolhimento. Continue assim!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SEÇÃO SUPERVISOR -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="supervisor" class="sec-hero">
+  <div class="sec-hero-head sup-head">
+    <div class="role-icon sup-icon">👩‍🏫</div>
+    <div>
+      <h2>Perfil Supervisor(a)</h2>
+      <p>Administre usuários, aprove agendamentos, gerencie a clínica e envie feedbacks</p>
+    </div>
+  </div>
+  <div class="sec-hero-body">
+
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon">👥</div>
+        <h4>Gestão de usuários</h4>
+        <p>Aprove supervisores, ative/desative psicólogos e veja todos os cadastros</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <h4>Todos atendimentos</h4>
+        <p>Visão geral de toda a clínica com KPIs e lista completa de sessões</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⚙️</div>
+        <h4>Gerenciar agenda</h4>
+        <p>Confirme, conclua ou cancele agendamentos com um clique</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">✍️</div>
+        <h4>Dar feedback</h4>
+        <p>Avalie sessões com estrelas e observações textuais para os psicólogos</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">✉️</div>
+        <h4>Fale Conosco</h4>
+        <p>Leia e gerencie todas as mensagens enviadas pelo formulário do site</p>
+      </div>
+    </div>
+
+    <div class="al-warn" style="margin-top:1.25rem;">⚠️ <strong>Atenção:</strong> A conta de supervisor requer aprovação de outro supervisor já ativo. O primeiro supervisor foi aprovado manualmente no banco de dados.</div>
+
+    <div class="div-wrap"><div class="div-line"></div><div class="div-text">passo a passo</div><div class="div-line"></div></div>
+
+    <div class="steps sup">
+      <div class="step">
+        <div class="step-num-col">
+          <div class="step-num">1</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Painel inicial — visão geral da clínica</h3>
+          <p>Ao entrar, você vê os KPIs principais: total de agendamentos, aguardando aprovação, confirmados e psicólogos ativos. Se houver supervisores aguardando aprovação, um alerta laranja aparece com o botão de aprovar.</p>
+          <div class="mockup-wrap" style="margin-top:.75rem;">
+            <div class="mockup-bar"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div><div class="url-bar">Painel — Supervisor(a)</div></div>
+            <div class="mockup-body">
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px;">
+                <div style="background:var(--bgw);border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--fh);font-size:22px;font-weight:800;color:#1A7A6E;">5</div><div style="font-size:10px;color:var(--ink3);margin-top:2px;">Total</div></div>
+                <div style="background:var(--bgw);border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--fh);font-size:22px;font-weight:800;color:#B45309;">2</div><div style="font-size:10px;color:var(--ink3);margin-top:2px;">Aguardando</div></div>
+                <div style="background:var(--bgw);border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--fh);font-size:22px;font-weight:800;color:#1A7A6E;">2</div><div style="font-size:10px;color:var(--ink3);margin-top:2px;">Confirmados</div></div>
+                <div style="background:var(--bgw);border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--fh);font-size:22px;font-weight:800;color:#1A7A6E;">2</div><div style="font-size:10px;color:var(--ink3);margin-top:2px;">Psicólogos</div></div>
+              </div>
+              <div style="border:2px solid #FDE68A;background:#FFFBEB;border-radius:8px;padding:10px;">
+                <div style="font-size:11px;font-weight:700;color:#92400E;margin-bottom:8px;">⏳ Supervisores aguardando aprovação (1)</div>
+                <div style="display:flex;align-items:center;gap:8px;background:#fff;border-radius:6px;padding:8px;">
+                  <div style="width:28px;height:28px;border-radius:8px;background:#7C3AED;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">S</div>
+                  <div style="flex:1;"><div style="font-size:11px;font-weight:600;">SUPERVISOR</div><div style="font-size:10px;color:var(--ink3);">supervisor@teste.com</div></div>
+                  <div style="display:flex;gap:5px;">
+                    <div style="background:#E8F5F3;color:#1A7A6E;border:1px solid #A7D7D2;border-radius:5px;padding:4px 9px;font-size:10px;font-weight:600;">✅ Aprovar</div>
+                    <div style="background:#FDF0EE;color:#C0392B;border:1px solid #F5C6C2;border-radius:5px;padding:4px 9px;font-size:10px;font-weight:600;">❌ Rejeitar</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num-col">
+          <div class="step-num">2</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Gerencie usuários da plataforma</h3>
+          <p>Em <strong>"Gestão de Usuários"</strong>, você tem controle completo de todos os cadastros:</p>
+          <p><strong>Psicólogos:</strong> Veja a lista de psicólogos e use os botões <em>Ativar</em> ou <em>Desativar</em>. Apenas psicólogos <span style="background:#D1FAE5;color:#065F46;padding:1px 8px;border-radius:100px;font-size:12px;font-weight:600;">ativo</span> aparecem para os pacientes agendarem.<br/><strong>Pacientes:</strong> Liste e gerencie todos os pacientes da clínica.<br/><strong>Supervisores pendentes:</strong> Aparecem em destaque com botões de Aprovar/Rejeitar.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num-col">
+          <div class="step-num">3</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Gerencie a agenda — confirme e cancele</h3>
+          <p>Em <strong>"Gerenciar Agenda"</strong>, você vê todos os agendamentos ativos (pendentes e confirmados). Para cada um, você pode:</p>
+          <div style="display:flex;flex-direction:column;gap:6px;margin:.75rem 0;">
+            <div style="display:flex;align-items:center;gap:8px;"><div style="background:#E8F5F3;color:#1A7A6E;border:1px solid #A7D7D2;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;flex-shrink:0;">✅ Confirmar</div><span style="font-size:13px;color:var(--ink2);">Muda o status de <em>pendente</em> para <em>confirmado</em></span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><div style="background:#E8F5F3;color:#1A7A6E;border:1px solid #A7D7D2;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;flex-shrink:0;">🟣 Concluir</div><span style="font-size:13px;color:var(--ink2);">Muda de <em>confirmado</em> para <em>concluído</em> após a sessão</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><div style="background:#FDF0EE;color:#C0392B;border:1px solid #F5C6C2;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;flex-shrink:0;">❌ Cancelar</div><span style="font-size:13px;color:var(--ink2);">Cancela o agendamento — o paciente será informado</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num-col">
+          <div class="step-num">4</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Envie feedback para um psicólogo</h3>
+          <p>Em <strong>"Dar Feedback"</strong>, selecione o psicólogo(a) e o paciente atendido. Dê uma nota de 1 a 5 estrelas clicando nas estrelas e escreva suas observações no campo de texto. Clique em <strong>"Enviar feedback"</strong> — a mensagem aparecerá no painel do psicólogo imediatamente.</p>
+          <div class="al-ok">✅ O psicólogo verá a avaliação em "Feedbacks Recebidos" com data, nota e observações.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num-col">
+          <div class="step-num">5</div>
+        </div>
+        <div class="step-body">
+          <h3>Leia as mensagens do Fale Conosco</h3>
+          <p>Em <strong>"Fale Conosco"</strong>, você vê todas as mensagens enviadas pelo formulário do site. Mensagens novas aparecem com uma barra lateral colorida e o indicador <em>● Nova</em>. Após ler, clique em <strong>"✓ Marcar como lida"</strong> para organizar a caixa de entrada.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- USO MOBILE -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="mobile" class="mobile-section">
+  <h2>📱 Uso via celular</h2>
+  <p class="sub">A plataforma é totalmente responsiva. Todas as funcionalidades funcionam em smartphones — o layout se adapta automaticamente.</p>
+
+  <div class="phone-grid">
+
+    <!-- PHONE 1: Home -->
+    <div>
+      <div style="text-align:center;margin-bottom:.75rem;">
+        <div style="display:inline-block;background:var(--sky-l);color:var(--sky);font-size:12px;font-weight:600;padding:4px 12px;border-radius:100px;">Tela inicial</div>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-notch"><div class="phone-notch-hole"></div></div>
+        <div class="phone-screen">
+          <div class="phone-nav"><div class="phone-nav-logo">FUMEC</div><div class="phone-nav-btn">Entrar</div></div>
+          <div style="background:linear-gradient(135deg,#071828,#0B2D4E);border-radius:10px;padding:12px;margin-bottom:8px;">
+            <div style="font-size:9px;color:rgba(255,255,255,.4);margin-bottom:6px;border:1px solid rgba(255,255,255,.15);display:inline-block;padding:2px 8px;border-radius:100px;">🏛️ FUMEC — BH</div>
+            <div style="font-family:var(--fh);font-size:12px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:8px;">Cuidar da sua mente<br/>é parte da <span style="color:#5EEAD4;">formação</span></div>
+            <div style="background:#1A7A6E;color:#fff;text-align:center;border-radius:7px;padding:6px;font-size:10px;font-weight:600;">📅 Agendar consulta</div>
+          </div>
+          <div style="background:#1A7A6E;border-radius:8px;padding:8px;display:flex;justify-content:space-around;">
+            <div style="text-align:center;color:#fff;"><div style="font-size:13px;font-weight:800;">100%</div><div style="font-size:8px;opacity:.7;">Gratuito</div></div>
+            <div style="text-align:center;color:#fff;"><div style="font-size:13px;font-weight:800;">LGPD</div><div style="font-size:8px;opacity:.7;">Protegido</div></div>
+            <div style="text-align:center;color:#fff;"><div style="font-size:13px;font-weight:800;">CFP</div><div style="font-size:8px;opacity:.7;">Ética</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHONE 2: Dashboard -->
+    <div>
+      <div style="text-align:center;margin-bottom:.75rem;">
+        <div style="display:inline-block;background:var(--teal-l);color:var(--teal);font-size:12px;font-weight:600;padding:4px 12px;border-radius:100px;">Dashboard</div>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-notch"><div class="phone-notch-hole"></div></div>
+        <div class="phone-screen">
+          <div class="phone-nav"><div class="phone-nav-logo">FUMEC</div><div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:100px;padding:3px 10px;display:flex;align-items:center;gap:4px;"><div style="width:16px;height:16px;border-radius:50%;background:#1A7A6E;color:#fff;font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center;">A</div><span style="font-size:9px;color:#fff;">Aline</span></div></div>
+          <div class="phone-body">
+            <div class="phone-title">Olá, Aline! 👋</div>
+            <div class="phone-kpi-row">
+              <div class="phone-kpi"><div class="phone-kpi-n">2</div><div class="phone-kpi-l">Confirmadas</div></div>
+              <div class="phone-kpi"><div class="phone-kpi-n">1</div><div class="phone-kpi-l">Aguardando</div></div>
+              <div class="phone-kpi"><div class="phone-kpi-n">3</div><div class="phone-kpi-l">Realizadas</div></div>
+            </div>
+            <div style="font-size:10px;font-weight:600;color:var(--ink);margin-bottom:5px;">📅 Próximas consultas</div>
+            <div class="phone-row">
+              <div class="phone-av">C</div>
+              <div class="phone-row-text"><div class="phone-row-name">Dr. Carlos Lima</div><div class="phone-row-sub">14/06 · 09:00</div></div>
+              <span class="phone-st st-c">confirmado</span>
+            </div>
+            <div class="phone-row">
+              <div class="phone-av">C</div>
+              <div class="phone-row-text"><div class="phone-row-name">Dr. Carlos Lima</div><div class="phone-row-sub">19/06 · 09:00</div></div>
+              <span class="phone-st st-p">pendente</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHONE 3: Agendar -->
+    <div>
+      <div style="text-align:center;margin-bottom:.75rem;">
+        <div style="display:inline-block;background:#EDE9FE;color:#5B21B6;font-size:12px;font-weight:600;padding:4px 12px;border-radius:100px;">Agendamento</div>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-notch"><div class="phone-notch-hole"></div></div>
+        <div class="phone-screen">
+          <div class="phone-nav"><div class="phone-nav-logo">FUMEC</div><div class="phone-nav-btn">Sair</div></div>
+          <div class="phone-body">
+            <div class="phone-title">📅 Agendar Consulta</div>
+            <div style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap;">
+              <div style="background:#0B2D4E;color:#fff;font-size:9px;padding:4px 8px;border-radius:5px;font-weight:600;">Dr. Carlos Lima</div>
+              <div style="background:var(--bgw);color:var(--ink2);font-size:9px;padding:4px 8px;border-radius:5px;border:1px solid var(--border);">Dra. Paula Rosa</div>
+            </div>
+            <div class="phone-cal">
+              <div class="phone-cal-d">D</div><div class="phone-cal-d">S</div><div class="phone-cal-d">T</div><div class="phone-cal-d">Q</div><div class="phone-cal-d">Q</div><div class="phone-cal-d">S</div><div class="phone-cal-d">S</div>
+              <div class="phone-day p"></div><div class="phone-day p"></div><div class="phone-day p"></div><div class="phone-day p">3</div><div class="phone-day p">4</div><div class="phone-day p">5</div><div class="phone-day p">6</div>
+              <div class="phone-day p">7</div><div class="phone-day p">8</div><div class="phone-day p">9</div><div class="phone-day p">10</div><div class="phone-day p">11</div><div class="phone-day t">12</div><div class="phone-day">13</div>
+              <div class="phone-day">14</div><div class="phone-day s">15</div><div class="phone-day">16</div><div class="phone-day">17</div><div class="phone-day">18</div><div class="phone-day">19</div><div class="phone-day">20</div>
+            </div>
+            <div style="font-size:10px;font-weight:600;margin-bottom:5px;">15/06 — Horários</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+              <div style="text-align:center;padding:5px;border:1.5px solid var(--border);border-radius:5px;font-size:9px;color:#ccc;">08:00 ✗</div>
+              <div style="text-align:center;padding:5px;border:1.5px solid #1A7A6E;border-radius:5px;font-size:9px;background:#1A7A6E;color:#fff;font-weight:600;">09:00 ✓</div>
+              <div style="text-align:center;padding:5px;border:1.5px solid var(--border);border-radius:5px;font-size:9px;">10:00</div>
+              <div style="text-align:center;padding:5px;border:1.5px solid var(--border);border-radius:5px;font-size:9px;">14:00</div>
+            </div>
+            <div style="background:#0B2D4E;color:#fff;text-align:center;border-radius:6px;padding:6px;margin-top:6px;font-size:10px;font-weight:700;">Confirmar agendamento</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="al-info" style="margin-top:1.5rem;">📱 <strong>Dica para celular:</strong> Em telas pequenas, o menu lateral fica oculto. Para navegar entre as seções do dashboard, use o botão de menu (☰) no topo da página. Todas as funcionalidades funcionam normalmente no celular — agendamento, calendário, feedbacks e gestão de usuários.</div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-inner">
+    <h3>Pronto para usar a plataforma?</h3>
+    <p>Acesse o sistema agora com as credenciais de teste fornecidas acima.</p>
+    <a class="footer-link" href="https://asilk3037-source.github.io/trabalho_fumec_clinica/" target="_blank">Acessar a plataforma →</a>
+    <div class="footer-meta">
+      © 2026 Universidade FUMEC · Clínica Escola de Psicologia<br/>
+      Projeto extensionista — Sistemas de Informação · Desenvolvido com React + Supabase
+    </div>
+  </div>
+</div>
+
+<!-- STICKY TOC (depois do cover) -->
+<div class="toc">
+  <div class="toc-inner">
+    <span class="toc-label">Navegar:</span>
+    <div class="toc-links">
+      <a href="#paciente" class="toc-link pac">🙋 Paciente</a>
+      <a href="#psicologo" class="toc-link psi">🧑‍⚕️ Psicólogo</a>
+      <a href="#supervisor" class="toc-link sup">👩‍🏫 Supervisor</a>
+      <a href="#mobile" class="toc-link">📱 Celular</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const toc = document.querySelector('.toc');
+const cover = document.querySelector('.cover');
+function updateToc() {
+  const coverBottom = cover.getBoundingClientRect().bottom;
+  toc.style.display = coverBottom < 0 ? 'block' : 'none';
+}
+updateToc();
+window.addEventListener('scroll', updateToc, { passive: true });
+
+document.querySelectorAll('.toc-link').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const id = a.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) {
+      const offset = 80;
+      const top = el.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  });
+});
+</script>
+
+</body>
+</html>
