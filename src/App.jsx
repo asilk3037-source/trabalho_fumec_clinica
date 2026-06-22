@@ -396,7 +396,10 @@ footer::before { content:''; position:absolute; top:0; left:0; right:0; height:3
 
 /* ── KPI / PANEL / TABLE ─────────────────────────────────────── */
 .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px; margin-bottom:2rem; }
-.kpi { background:var(--bg); border:1px solid var(--border); border-radius:var(--r); padding:1.25rem 1.5rem; }
+.kpi { background:var(--bg); border:1px solid var(--border); border-radius:18px; padding:1.25rem 1.5rem; box-shadow:0 6px 22px -10px rgba(11,45,78,.12); transition:box-shadow .22s ease, transform .22s ease; }
+.kpi:hover { box-shadow:0 10px 28px -10px rgba(0,212,190,.28); transform:translateY(-2px); }
+[data-theme="dark"] .kpi { box-shadow:0 6px 22px -10px rgba(0,0,0,.4); }
+[data-theme="dark"] .kpi:hover { box-shadow:0 10px 28px -10px rgba(0,212,190,.22); }
 .kpi-num { font-family:var(--font-head); font-size:30px; font-weight:800; color:var(--teal); line-height:1; }
 .kpi-label { font-size:12.5px; color:var(--ink-2); margin-top:5px; }
 .panel { background:var(--bg); border:1px solid var(--border); border-radius:var(--r); padding:1.5rem; margin-bottom:1.5rem; }
@@ -502,8 +505,8 @@ tr:hover td { background:#FAFBFC; }
 /* ── BUTTONS ─────────────────────────────────────────────────── */
 .btn { display:inline-flex; align-items:center; gap:7px; padding:12px 26px; border-radius:var(--r-sm); font-size:14.5px; font-weight:600; cursor:pointer; border:none; transition:all .18s; font-family:var(--font-body); text-decoration:none; line-height:1; white-space:nowrap; position:relative; overflow:hidden; }
 .btn:disabled { opacity:.55; cursor:not-allowed; }
-.btn-teal { background:var(--teal); color:#fff; }
-.btn-teal:hover { background:var(--teal-mid); transform:translateY(-1px); box-shadow:0 4px 14px rgba(26,122,110,.4); }
+.btn-teal { background:var(--grad-teal); color:#06231F; }
+.btn-teal:hover { filter:brightness(1.05); transform:translateY(-1px); box-shadow:var(--glow-teal); }
 .btn-teal:active, .nav-cta:active, .form-btn:active { transform:translateY(0) scale(.97); transition-duration:.08s; }
 .btn-teal::before, .nav-cta::before, .form-btn::before { content:''; position:absolute; top:0; left:-60%; width:45%; height:100%; background:linear-gradient(120deg, transparent, rgba(255,255,255,.4), transparent); transform:skewX(-20deg); transition:left .55s ease; pointer-events:none; }
 .btn-teal:hover::before, .nav-cta:hover::before, .form-btn:hover::before { left:130%; }
