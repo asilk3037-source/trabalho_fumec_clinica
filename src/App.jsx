@@ -711,7 +711,7 @@ function useTheme() {
   });
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
-    try { localStorage.setItem("fumec-theme", theme); } catch {}
+    try { localStorage.setItem("fumec-theme", theme); } catch { /* localStorage indisponível */ }
   }, [theme]);
   return [theme, setTheme];
 }
@@ -942,6 +942,7 @@ function EmailEditField({ uid, currentEmail, onUpdated }) {
 let _setToasts = null;
 function useToastSetup() {
   const [toasts, setToasts] = useState([]);
+  // eslint-disable-next-line react-hooks/globals -- singleton intencional: permite toast() global fora da árvore React
   _setToasts = setToasts;
   return toasts;
 }
@@ -1031,7 +1032,7 @@ export default function App() {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session) { setUser(session.user); await loadProfile(session.user.id); setPage("dashboard"); }
     });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (ev, ses) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (ev) => {
       if (ev === "SIGNED_OUT") { setUser(null); setProfile(null); setPage("home"); }
       if (ev === "PASSWORD_RECOVERY") { setPage("reset-password"); }
     });
@@ -1933,6 +1934,8 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
 }
 
 // ─── AGENDAMENTO ─────────────────────────────────────────────────────────────
+const HORAS_PADRAO = ["08:00","09:00","10:00","11:00","14:00","15:00","16:00","17:00"];
+const MESES_NOMES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 function TelaAgendar({ uid, profile, psicos, onAgendado }) {
   const hoje = new Date();
   const [mes, setMes]       = useState(hoje.getMonth());
@@ -1945,8 +1948,8 @@ function TelaAgendar({ uid, profile, psicos, onAgendado }) {
   const [salvando, setSalv] = useState(false);
   const [ok, setOk]         = useState(null);
 
-  const HORAS = ["08:00","09:00","10:00","11:00","14:00","15:00","16:00","17:00"];
-  const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  const HORAS = HORAS_PADRAO;
+  const MESES = MESES_NOMES;
 
   useEffect(() => {
     if (!dia||!psico) return;
@@ -1961,7 +1964,7 @@ function TelaAgendar({ uid, profile, psicos, onAgendado }) {
         if (error || !data?.horas?.length) setDisp(HORAS);
         else setDisp(data.horas);
       });
-  }, [dia, psico, mes, ano]);
+  }, [dia, psico, mes, ano, HORAS]);
 
   const diasNoMes = new Date(ano,mes+1,0).getDate();
   const primDia   = new Date(ano,mes,1).getDay();
@@ -2068,6 +2071,8 @@ function TelaAgendar({ uid, profile, psicos, onAgendado }) {
 }
 
 // ─── PSICÓLOGO ───────────────────────────────────────────────────────────────
+const DIAS_SEMANA = ["segunda","terca","quarta","quinta","sexta"];
+const DIAS_LABEL_MAP = {segunda:"Segunda",terca:"Terça",quarta:"Quarta",quinta:"Quinta",sexta:"Sexta"};
 function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
   const [atend, setAtend] = useState([]);
   const [fbs, setFbs]     = useState([]);
@@ -2082,9 +2087,9 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
   const [histExpand, setHistExpand] = useState(null); // paciente_id expandido
 
   // Agenda state
-  const HORAS = ["08:00","09:00","10:00","11:00","14:00","15:00","16:00","17:00"];
-  const DIAS  = ["segunda","terca","quarta","quinta","sexta"];
-  const DIAS_LABEL = {segunda:"Segunda",terca:"Terça",quarta:"Quarta",quinta:"Quinta",sexta:"Sexta"};
+  const HORAS = HORAS_PADRAO;
+  const DIAS  = DIAS_SEMANA;
+  const DIAS_LABEL = DIAS_LABEL_MAP;
   const [agenda, setAgenda] = useState(() => {
     const obj = {};
     DIAS.forEach(d => { obj[d] = []; });
@@ -2114,7 +2119,7 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
       }
       setAgendaLoaded(true);
     })();
-  }, [aba, uid, agendaLoaded]);
+  }, [aba, uid, agendaLoaded, DIAS]);
 
   function toggleHora(dia, hora) {
     setAgenda(prev => {
@@ -2542,7 +2547,6 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
   const [buscaAtend, setBuscaAtend] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("todos");
   const [buscaGerenciar, setBuscaGerenciar] = useState("");
-  const [buscaMsg, setBuscaMsg] = useState("");
 
   const [fbPsico, setFbP]     = useState("");
   const [fbPac, setFbPac]     = useState("");
