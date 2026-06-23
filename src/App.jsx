@@ -421,6 +421,17 @@ tr:hover td { background:#FAFBFC; }
 .st-ativo { background:#D1FAE5; color:#065F46; }
 .st-aguardando { background:#FEF3C7; color:#92400E; }
 
+/* ── APPOINTMENT CARDS ───────────────────────────────────────── */
+.appt-card { background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:13px 14px; display:flex; align-items:center; gap:12px; margin-bottom:10px; box-shadow:var(--shadow-sm); transition:box-shadow .2s ease, transform .2s ease; }
+.appt-card:last-child { margin-bottom:0; }
+.appt-card:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
+.appt-when { display:flex; flex-direction:column; align-items:center; justify-content:center; min-width:48px; background:var(--bg-warm); border-radius:12px; padding:8px 6px; flex-shrink:0; }
+.appt-when .ad-day { font-size:16px; font-weight:800; line-height:1; color:var(--ink); font-family:var(--font-head); }
+.appt-when .ad-month { font-size:9px; color:var(--ink-2); text-transform:uppercase; letter-spacing:.06em; margin-top:3px; font-weight:700; }
+.appt-info { flex:1; min-width:0; }
+.appt-info .ai-name { font-size:13.5px; font-weight:700; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.appt-info .ai-sub { font-size:11.5px; color:var(--ink-2); margin-top:1px; }
+
 /* ── CALENDAR ────────────────────────────────────────────────── */
 .cal-wrap { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
 .cal { background:var(--bg); border:1px solid var(--border); border-radius:var(--r); padding:1.25rem; }
@@ -652,6 +663,26 @@ function fmt(iso) {
   if (!iso) return "—";
   const [y, m, d] = iso.split("-");
   return `${d}/${m}/${y}`;
+}
+const MESES_ABBR = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+function diaMes(iso) {
+  if (!iso) return { dia: "—", mes: "" };
+  const [, m, d] = iso.split("-");
+  return { dia: d, mes: MESES_ABBR[parseInt(m, 10) - 1] || "" };
+}
+/** Card de atendimento (data + nome + status) — usado nas listas de "próximos atendimentos" */
+function AppointmentCard({ data, hora, nome, subtitulo, status }) {
+  const { dia, mes } = diaMes(data);
+  return (
+    <div className="appt-card">
+      <div className="appt-when"><span className="ad-day">{dia}</span><span className="ad-month">{mes}</span></div>
+      <div className="appt-info">
+        <div className="ai-name">{nome || "—"}</div>
+        <div className="ai-sub">{fmtH(hora)}{subtitulo ? ` · ${subtitulo}` : ""}</div>
+      </div>
+      <span className={`st st-${status}`}>{status}</span>
+    </div>
+  );
 }
 /** Exporta um array de objetos para CSV e dispara o download */
 function exportarCSV(filename, headers, rows) {
@@ -1887,13 +1918,9 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
               onCta={() => setAba("agendar")}
             />
           ) :
-            <div className="tw"><table>
-              <thead><tr><th>Data</th><th>Horário</th><th>Psicólogo(a)</th><th>Status</th></tr></thead>
-              <tbody>{prox.slice(0,5).map(a=>(
-                <tr key={a.id}><td>{fmt(a.data)}</td><td>{fmtH(a.hora)}</td><td>{a.psicologo_nome||"—"}</td>
-                  <td><span className={`st st-${a.status}`}>{a.status}</span></td></tr>
-              ))}</tbody>
-            </table></div>
+            <div>{prox.slice(0,5).map(a=>(
+              <AppointmentCard key={a.id} data={a.data} hora={a.hora} nome={a.psicologo_nome} status={a.status}/>
+            ))}</div>
           }
           {prox.length>5 && (
             <button className="load-more-btn" onClick={() => setAba("consultas")}>Ver todas as {prox.length} consultas <ArrowRight size={13} style={{verticalAlign:"-2px"}}/></button>
@@ -2380,13 +2407,9 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
               />
             );
             return <>
-              <div className="tw"><table>
-                <thead><tr><th>Data</th><th>Horário</th><th>Paciente</th><th>Status</th></tr></thead>
-                <tbody>{prox.slice(0,5).map(a=>(
-                  <tr key={a.id}><td>{fmt(a.data)}</td><td>{fmtH(a.hora)}</td><td>{a.paciente_nome||"—"}</td>
-                    <td><span className={`st st-${a.status}`}>{a.status}</span></td></tr>
-                ))}</tbody>
-              </table></div>
+              <div>{prox.slice(0,5).map(a=>(
+                <AppointmentCard key={a.id} data={a.data} hora={a.hora} nome={a.paciente_nome} status={a.status}/>
+              ))}</div>
               {prox.length>5 && (
                 <button className="load-more-btn" onClick={() => setAba("atendimentos")}>Ver todos os {prox.length} atendimentos <ArrowRight size={13} style={{verticalAlign:"-2px"}}/></button>
               )}
