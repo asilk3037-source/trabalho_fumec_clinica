@@ -253,7 +253,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .fg { margin-bottom:1rem; }
 .fg label { display:block; font-size:13px; font-weight:600; margin-bottom:5px; color:var(--ink); }
 .fg input,.fg select,.fg textarea { width:100%; padding:10px 13px; border:1.5px solid var(--border); border-radius:var(--r-sm); font-size:16px; color:var(--ink); background:var(--bg); outline:none; transition:border-color .18s,box-shadow .18s; font-family:var(--font-body); }
-.fg input:focus,.fg select:focus,.fg textarea:focus { border-color:var(--teal); box-shadow:0 0 0 3px rgba(26,122,110,.12); }
+.fg input:focus,.fg select:focus,.fg textarea:focus { border-color:var(--teal-vivid); box-shadow:0 0 0 3px rgba(0,212,190,.18); }
 .fg textarea { height:108px; resize:vertical; }
 .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .form-btn { width:100%; background:var(--grad-teal); color:#06231F; border:none; padding:13px; border-radius:var(--r-sm); font-size:15px; font-weight:700; cursor:pointer; transition:filter .18s, transform .08s; margin-top:4px; font-family:var(--font-head); position:relative; overflow:hidden; box-shadow:var(--glow-teal); }
@@ -368,7 +368,7 @@ footer::before { content:''; position:absolute; top:0; left:0; right:0; height:3
 .sidebar { width:252px; flex-shrink:0; background:var(--chrome); display:flex; flex-direction:column; border-right:1px solid rgba(255,255,255,.06); }
 .sb-user { padding:1.5rem 1.25rem 1.25rem; border-bottom:1px solid rgba(255,255,255,.07); display:flex; flex-direction:column; align-items:center; text-align:center; }
 .sb-avatar-wrap { position:relative; margin-bottom:10px; }
-.sb-avatar { width:60px; height:60px; border-radius:14px; background:var(--teal); color:#fff; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:800; font-family:var(--font-head); overflow:hidden; }
+.sb-avatar { width:60px; height:60px; border-radius:14px; background:var(--teal); color:#fff; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:800; font-family:var(--font-head); overflow:hidden; box-shadow:var(--glow-teal); }
 .sb-avatar img { width:100%; height:100%; object-fit:cover; }
 .sb-avatar-edit { position:absolute; bottom:-4px; right:-4px; width:22px; height:22px; border-radius:50%; background:var(--teal); color:#fff; border:2px solid var(--chrome); display:flex; align-items:center; justify-content:center; font-size:11px; cursor:pointer; transition:background .15s; }
 .sb-avatar-edit:hover { background:var(--teal-mid); }
@@ -478,7 +478,7 @@ tr:hover td { background:#FAFBFC; }
 
 /* ── PROFILE ─────────────────────────────────────────────────── */
 .prof-card { display:flex; align-items:center; gap:1.5rem; background:var(--bg); border:1px solid var(--border); border-radius:var(--r); padding:1.5rem; margin-bottom:1.5rem; flex-wrap:wrap; }
-.prof-av { width:80px; height:80px; border-radius:16px; background:var(--teal); color:#fff; display:flex; align-items:center; justify-content:center; font-size:34px; font-weight:800; font-family:var(--font-head); overflow:hidden; flex-shrink:0; }
+.prof-av { width:80px; height:80px; border-radius:16px; background:var(--teal); color:#fff; display:flex; align-items:center; justify-content:center; font-size:34px; font-weight:800; font-family:var(--font-head); overflow:hidden; flex-shrink:0; box-shadow:var(--glow-teal); }
 .prof-av img { width:100%; height:100%; object-fit:cover; }
 .prof-info h3 { font-family:var(--font-head); font-size:18px; font-weight:800; color:var(--ink); margin-bottom:3px; }
 .prof-info p { font-size:13.5px; color:var(--ink-2); }
@@ -740,10 +740,11 @@ function colorForName(name) {
   return AVATAR_PALETTE[hash % AVATAR_PALETTE.length];
 }
 /** Avatar com cor consistente derivada do nome. Aceita className para herdar tamanho/forma do CSS existente. */
-function Avatar({ name, url, className = "", style = {} }) {
+function Avatar({ name, url, className = "", style = {}, own = false }) {
   if (url) return <div className={className} style={style}><img src={url} alt=""/></div>;
+  const bg = own ? { backgroundImage: "var(--grad-teal)", background: "none", color: "#06231F" } : { background: colorForName(name) };
   return (
-    <div className={className} style={{ ...style, background: colorForName(name) }}>
+    <div className={className} style={{ ...style, ...bg }}>
       {(name || "?")[0]?.toUpperCase()}
     </div>
   );
@@ -1638,7 +1639,7 @@ function Dashboard({ user, profile, onLogout, onProfileUpdate, theme, setTheme }
         <ul className="nav-links">
           <li>
             <div className="nav-user-pill">
-              <Avatar className="nav-user-avatar" name={profile.nome} url={avatarUrl}/>
+              <Avatar className="nav-user-avatar" name={profile.nome} url={avatarUrl} own/>
               <span style={{fontSize:13,color:"rgba(255,255,255,.85)"}}>{profile.nome.split(" ")[0]}</span>
               <span className={`badge ${BADGES[profile.tipo]}`}>{LABELS[profile.tipo]}</span>
             </div>
@@ -1651,7 +1652,7 @@ function Dashboard({ user, profile, onLogout, onProfileUpdate, theme, setTheme }
         <aside className="sidebar">
           <div className="sb-user">
             <div className="sb-avatar-wrap">
-              <Avatar className="sb-avatar" name={profile.nome} url={avatarUrl}/>
+              <Avatar className="sb-avatar" name={profile.nome} url={avatarUrl} own/>
               <div className="sb-avatar-edit" onClick={() => fileRef.current?.click()} title="Trocar foto"><Camera size={11}/></div>
               <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleAvatarUpload}/>
             </div>
@@ -1789,7 +1790,7 @@ function DashPac({ aba, setAba, profile, uid, onPU, avatarUrl }) {
       <div className="dash-sub">Suas informações pessoais</div>
       <div className="prof-card">
         <div className="prof-av-wrap">
-          <Avatar className="prof-av" name={profile.nome} url={avatarUrl}/>
+          <Avatar className="prof-av" name={profile.nome} url={avatarUrl} own/>
         </div>
         <div className="prof-info"><h3>{profile.nome}</h3><p>{profile.email}{profile.matricula&&` · Matrícula: ${profile.matricula}`}</p><br/><span className="chip">Paciente</span></div>
       </div>
@@ -2192,7 +2193,7 @@ function DashPsi({ aba, setAba, profile, uid, onPU, avatarUrl }) {
       <div className="dash-title"><User size={20}/> Meu Perfil</div>
       <div className="prof-card">
         <div className="prof-av-wrap">
-          <Avatar className="prof-av" name={profile.nome} url={avatarUrl}/>
+          <Avatar className="prof-av" name={profile.nome} url={avatarUrl} own/>
         </div>
         <div className="prof-info"><h3>{profile.nome}</h3><p>{profile.email}{profile.crp&&` · CRP: ${profile.crp}`}</p><br/><span className="chip">Psicólogo(a) Estagiário(a)</span></div>
       </div>
@@ -2671,7 +2672,7 @@ function DashSup({ aba, setAba, profile, uid, onPU, avatarUrl }) {
       <div className="dash-title"><GraduationCap size={20}/> Meu Perfil</div>
       <div className="prof-card">
         <div className="prof-av-wrap">
-          <Avatar className="prof-av" name={profile.nome} url={avatarUrl}/>
+          <Avatar className="prof-av" name={profile.nome} url={avatarUrl} own/>
         </div>
         <div className="prof-info"><h3>{profile.nome}</h3><p>{profile.email}</p><br/><span className="chip">Supervisor / Administrador</span></div>
       </div>
